@@ -1,12 +1,12 @@
 import { AvatarIcon, HamburgerIcon } from "../svgs/Icons";
 
-interface TopNavProps {
+export interface NavProps {
   active: string;
 }
 
-const TopNav = ({ active }: TopNavProps) => {
+const TopNav = ({ active }: NavProps) => {
   return (
-    <div className="py-4 px-10 flex items-center justify-between border-b-2 border-[#ccc] shadow-md">
+    <div className="py-4 px-6 flex items-center justify-between border-b-2 border-[#ccc] shadow-md">
       <div className="flex items-center space-x-4">
         <HamburgerIcon />
         <h2 className="text-[24px] capitalize">{active}</h2>
