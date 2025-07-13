@@ -1,9 +1,9 @@
-import Login from "./pages/auth/login";
+import Auth from "./pages/auth";
 
 const App = () => {
   return (
     <>
-      <Login />
+      <Auth />
     </>
   );
 };

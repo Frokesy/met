@@ -1,7 +1,7 @@
 import { useState } from "react";
-import AuthContainer from "../../../components/containers/AuthContainer";
+import AuthContainer from "../../components/containers/AuthContainer";
 
-const Login = () => {
+const Auth = () => {
   const [loginType, setLoginType] = useState("student");
 
   return (
@@ -57,4 +57,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Auth;
