@@ -1,7 +1,9 @@
+import Login from "./pages/auth/login";
+
 const App = () => {
   return (
     <>
-      <h2 className="bg-red-500 text-[#fff]">Hello world</h2>
+      <Login />
     </>
   );
 };
