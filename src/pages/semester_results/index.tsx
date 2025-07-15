@@ -1,49 +1,49 @@
 import MainContainer from "../../components/containers/MainContainer";
 
-const InternalMarks = () => {
-  const firstInternalExamination = [
+const SemesterResults = () => {
+  const firstSemester = [
     {
       subject: "(CS3452) Theory of Computation",
-      mark: "75/100",
+      grade: "A+",
     },
     {
       subject: "(CS3751) Data Structures",
-      mark: "97/100",
+      grade: "A",
     },
     {
       subject: "(CS3453) Cryptography and Cyber Security",
-      mark: "80/100",
+      grade: "B+",
     },
     {
       subject: "(CS3852) Database Management System",
-      mark: "98/100",
+      grade: "O",
     },
   ];
 
-  const semesterInternalMarks = [
+  const secondSemester = [
     {
       subject: "(CS3452) Theory of Computation",
-      mark: "25/40",
+      grade: "A+",
     },
     {
       subject: "(CS3751) Data Structures",
-      mark: "35/40",
+      grade: "A",
     },
     {
       subject: "(CS3453) Cryptography and Cyber Security",
-      mark: "30/40",
+      grade: "B+",
     },
     {
       subject: "(CS3852) Database Management System",
-      mark: "39/40",
+      grade: "O",
     },
   ];
 
   return (
-    <MainContainer active="internal marks">
+    <MainContainer active="semester results">
       <div className="px-6 pt-10 space-y-6 text-[#2E4765]">
         <div className="bg-[#fff] p-4 pb-14 rounded-xl shadow-md">
-          <h2 className="text-[24px]">First Internal Examination</h2>
+          <h2 className="text-[24px]">First Semester</h2>
 
           <div className="mt-6 mx-6 overflow-x-auto rounded-xl border border-[#676B84]">
             <table className="w-full text-center border-collapse">
@@ -52,19 +52,19 @@ const InternalMarks = () => {
                   <th className="py-3 border-r-2 border-[#2E4765] w-[50%] font-semibold">
                     Subject Name
                   </th>
-                  <th className="py-3 w-[50%] font-semibold">Mark</th>
+                  <th className="py-3 w-[50%] font-semibold">Grade</th>
                 </tr>
               </thead>
               <tbody>
-                {firstInternalExamination.map((marks, index) => (
+                {firstSemester.map((semester, index) => (
                   <tr
                     key={index}
                     className="bg-[#CFECF6] border-t border-[#2E4765]"
                   >
                     <td className="py-3 border-r-2 border-[#2E4765] font-semibold">
-                      {marks.subject}
+                      {semester.subject}
                     </td>
-                    <td className="py-3 font-semibold">{marks.mark}</td>
+                    <td className="py-3 font-semibold">{semester.grade}</td>
                   </tr>
                 ))}
               </tbody>
@@ -73,7 +73,7 @@ const InternalMarks = () => {
         </div>
 
         <div className="bg-[#fff] p-4 pb-14 rounded-xl shadow-md">
-          <h2 className="text-[24px]">Semester Internal Marks</h2>
+          <h2 className="text-[24px]">Second Semester</h2>
 
           <div className="mt-6 mx-6 overflow-x-auto rounded-xl border border-[#676B84]">
             <table className="w-full text-center border-collapse">
@@ -82,19 +82,19 @@ const InternalMarks = () => {
                   <th className="py-3 border-r-2 border-[#2E4765] w-[50%] font-semibold">
                     Subject Name
                   </th>
-                  <th className="py-3 w-[50%] font-semibold">Mark</th>
+                  <th className="py-3 w-[50%] font-semibold">Grade</th>
                 </tr>
               </thead>
               <tbody>
-                {semesterInternalMarks.map((marks, index) => (
+                {secondSemester.map((semester, index) => (
                   <tr
                     key={index}
                     className="bg-[#CFECF6] border-t border-[#2E4765]"
                   >
                     <td className="py-3 border-r-2 border-[#2E4765] font-semibold">
-                      {marks.subject}
+                      {semester.subject}
                     </td>
-                    <td className="py-3 font-semibold">{marks.mark}</td>
+                    <td className="py-3 font-semibold">{semester.grade}</td>
                   </tr>
                 ))}
               </tbody>
@@ -106,4 +106,4 @@ const InternalMarks = () => {
   );
 };
 
-export default InternalMarks;
+export default SemesterResults;
