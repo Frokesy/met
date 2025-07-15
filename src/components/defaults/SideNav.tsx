@@ -11,7 +11,7 @@ const SideNav = ({ active }: NavProps) => {
     { label: "Pay Dues", route: "/pay-dues" },
     { label: "Dues & Approvals", route: "/dues" },
     { label: "Time Table", route: "/timetable" },
-    { label: "Circular", route: "/circular" },
+    { label: "Circulars", route: "/circulars" },
     { label: "Events", route: "/events" },
   ];
   return (

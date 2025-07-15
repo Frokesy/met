@@ -6,6 +6,7 @@ import Assignments from "./pages/assignments";
 import InternalMarks from "./pages/internal_marks";
 import SemesterResults from "./pages/semester_results";
 import Notes from "./pages/notes";
+import Circulars from "./pages/circulars";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -15,6 +16,7 @@ const App = () => {
     { path: "/internal-marks", element: <InternalMarks /> },
     { path: "/semester-results", element: <SemesterResults /> },
     { path: "/notes", element: <Notes /> },
+    { path: "/circulars", element: <Circulars /> },
   ]);
 
   return (
