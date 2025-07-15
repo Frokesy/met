@@ -52,6 +52,134 @@ export const HamburgerIcon = () => (
   </svg>
 );
 
+export const DownloadIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 38 38"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+  >
+    <rect width="38" height="38" fill="url(#pattern0_63_512)" />
+    <defs>
+      <pattern
+        id="pattern0_63_512"
+        patternContentUnits="objectBoundingBox"
+        width="1"
+        height="1"
+      >
+        <use xlinkHref="#image0_63_512" transform="scale(0.01)" />
+      </pattern>
+      <image
+        id="image0_63_512"
+        width="100"
+        height="100"
+        preserveAspectRatio="none"
+        xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAADlElEQVR4nO3dS4gcVRTG8YohiBgf4EIIKAQN+FgooxCyEEEwZCUozi4QMk6+23VO98jgYpZN6p4eJ4ZAkpXZhSwiDAhKdm5cJZAguHGh4AMXQhRFJUpIfEy4SXwEk5jpqsw9XfX94MIwDD1V919VPdPVVV0UREREREREdEMzM/vugdgc1I4FseWbjfQz0DgQGW688SPS2EQWH4XGr4LayqqG2JcYxEc49Y1aWQe1j1Yd4+qAxNPpMRilIbNiT48b4+/Rr55ikIagrF6pHUTtZQZpKkjfpusGSY/BIAzSTuAe4gsYxBcwiC9gEF/AIL6AQXwBg/gCBvEFDOILGMQXMIgvYBBfwCC+gEF8AYP4AgbxBQziCxjEFzCIL2AQX8AgvoBBfAGD+AIG8QUM4gsYxBcwiC9gEF/AIL6AQW7DpGLpPqhNlWX1zGoH1BZqXx+itjDm754aDIb3Fm0CjbuD2IUGroJayTLELkDjrqItoPZt9knVulHi2aItoPGL7BOqtfeSz4u2QBm3B7Xz2SdVxx7ng45eLNpkTzl6HmI/T96eEX9pXYy/QO1ZSPx+cmLYj9DFbUWbhcHoCYh9MwF7xtnO3Gxgth83u36il/h1mKu2FF2CuaWHg8TPsk++Xjug9mlZxoeKLnptbvRg0Phx7gjhn/HJjA43FV226/Xh/UHtpIMYZ1QXH8g9Hy7sfGP/3ZD4QbbDlNiH6eZouefBlcHg0J1B7d0MMU7Mzx+4K/f6uzQ9vbw+iB1dsxhqx4EjG3Kvt3Mr64LGQ2sQ4+3hcHhH7rWdpChv3cbD1D7e8m8MaODE1H+GxKXmN6AOCaUJxP6oHyP+GaSaz70+rYD+aCfEfqsR4/ee2Ezu9WiVnlYvjXVOJZ06lurV3MvfSr1+fAFq51YR5FdI3JF7uVut1x89FzT+dAt/1p5LAXMvbydAbSpI/O4mh6kfIHu35l7OTgnpRNd17gWfvleW1eO5l6+TRIYbIbY3SDyVXjFOX6cXKnMvFxEREREREREREf3LrFRPpjcIQOI7//expxx25eNf01ypvZlemW50Y4Jar9457W4PpLmTuKexT9lkDGsmShMXAAWxw7m3sNCSAbGDtYNA7P3cKxJaMqDxvfp7yBq8z7YrA03sIem4x+cQ8/MckkANQePF3FtYmNgRL0JttmhSeidHUBulayr4f4bd0v9al+cqzVl/9FijMYiIiIiIiIrmXAKgen2Dl9AuuAAAAABJRU5ErkJggg=="
+      />
+    </defs>
+  </svg>
+);
+
+export const SearchIcon = () => (
+  <svg
+    width="24"
+    height="25"
+    viewBox="0 0 24 25"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      cx="11.7669"
+      cy="12.2666"
+      r="8.98856"
+      stroke="#2E4765"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M18.0186 18.9851L21.5426 22.5"
+      stroke="#130F26"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const LeftArrowIcon = () => (
+  <svg
+    width="50"
+    height="30"
+    viewBox="0 0 50 30"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+  >
+    <rect width="50" height="30" rx="5" fill="#D9D9D9" />
+    <rect x="15" y="5" width="20" height="20" fill="url(#pattern0_92_581)" />
+    <defs>
+      <pattern
+        id="pattern0_92_581"
+        patternContentUnits="objectBoundingBox"
+        width="1"
+        height="1"
+      >
+        <use xlinkHref="#image0_92_581" transform="scale(0.01)" />
+      </pattern>
+      <image
+        id="image0_92_581"
+        width="100"
+        height="100"
+        preserveAspectRatio="none"
+        xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAADCklEQVR4nO3dOYsUQRQH8J7AxMAjEfEKPUD0Q2jgjYmRQYPsvOqq16MYGTZ0vdEN/AKL6KqZR2Cirgsmpn4DzbwWPFAjo3VkhdV1QJxpu7be1vx/0NFuUD2P/9TR1TVZBgAAAAAAAAAAAMmwtt5nXH2RWC51S384dnsmFtH0RuP8NXKyaFgGyxc5edrrVRtit2+ikPNHiOXVykL8URT2d2K3cWJSQeyv/60QK1KyaK3fGbu9SeuWctQ4ef2vYvwuSv9Q7Dan3FfMGPbfRy3G0lUU9Z7YbU+OcfWxcVLx63L+eZYNOrHbn4z8QrWJ2M+OXYifHbosFEV/f+x7SAZZOU7s3zQqhvPzdH56V+x7SKyvkAaFkK/EQviaijSCGrqeIBUtQSoU6SIVekZQBn2FDl2kQoccqdA126bm84o5LBK2JEcq9DBIxdpPhWH/BbNtPWtQc+grWpIjFWmkwrA8RipakiMVehRcnyAnb5umYqpX7Yh9D0mw9srm/x9BQfxUOP8IqWgJUqEIWTmJVKz1VDj5jL6i5VQY9u8azbZZHqKvaElRVFuMk7tIhQJUyhnj/PumqTBGtse+h2RSQSz3kAoFCq5PGZYPzVLhHzhXbY19D0kVY/itoxFHUJ+M82djtz8xgw45eYG+QomlYSnmFYosPX9AQVQZdIj9S3xlKYJOXSEq69Pk/EcMe7VNDJ2/j4mhxqWTxpNEwYJiCFhGSXCh0eBRrcK0MDYzBIO0pPbgipEWnWlhbI4LwmKjXILbgxgbrBWnZYDTerRtvLY49a19FmlR/PKOa5YWvNIWSI4XeXQivACqT46DA9I8RIBwZF/7cqQlvbQYHOUXRo60JHZIMiMtweRIS3pH/xEOTw4DR8YmuIJMzs9jBTnQCjKxv9WoKCwLVPb3hmjXxKOGK8jk/LOJ//DCjsTk5rhFOcfVtmCNgmz8WX5ZH8TntjppuTFCQb4RVetDtwdGnuX7q8v/C7F/WJLlNtHMutVqBwyZ4su7iaUwVpy1/QPDfwcAAAAAAAAAAMgm0A8BS1+on/IGEQAAAABJRU5ErkJggg=="
+      />
+    </defs>
+  </svg>
+);
+
+export const RightArrowIcon = () => (
+  <svg
+    width="50"
+    height="30"
+    viewBox="0 0 50 30"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+  >
+    <rect
+      x="1"
+      y="1"
+      width="48"
+      height="28"
+      rx="4"
+      fill="#D9D9D9"
+      stroke="#16BBE5"
+      stroke-width="2"
+    />
+    <rect x="15" y="5" width="20" height="20" fill="url(#pattern0_92_580)" />
+    <defs>
+      <pattern
+        id="pattern0_92_580"
+        patternContentUnits="objectBoundingBox"
+        width="1"
+        height="1"
+      >
+        <use xlinkHref="#image0_92_580" transform="scale(0.01)" />
+      </pattern>
+      <image
+        id="image0_92_580"
+        width="100"
+        height="100"
+        preserveAspectRatio="none"
+        xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAADQ0lEQVR4nO3dPWgUQRQH8PMbRBS/OkW0sVC0sfKzsBQrvVaU27zZmXeHRCxEi5F7c8Y2hUWw0lLERiwsoyi2iq2IaBdMk6iokJUNGIMYzG3uMi9z/x9sc9WbG3Z2/7Mzu7UaAAAAAAAAAAAA1MjJcXJyjViumGb7MP6SSFqt0Q3k5JHhUMw/yt+sld2x6hpYxHLn786YO5xMG5ar3vu1sescCK2W32w4fFuwQ+Y6Jrwxzc6x2PUmL887B//bGXOHzBgnd5lvbY9dd7IutTo7Z//oRXdKKIhl0nD7svd+dez6k2Q4PO2mQ+Yd45lrH4hdf3KsHdlHLO+qdYr8MBxGiPzG2O1ISnldIJZ73Q5f5s8w9p5sOBu7HcnJm50ThsPbikNYQS48dk72xG5HUojG1pUXbeIwVbFjvhiWm3Xv18duS1KypuwlDk+qni0G2aU/ymuDcfKh4kV/hjjcL2+v+1TeYCrvosphyLjwveJFfxLZpQ+s7RwyHF5UHsY4PC9nB/pR2wArVhkbLhgOExXvxH4allHn/KbYLUlKY9hvM07GlpBdPhnXPh+7HcnJkV30IWQXnTJkF50I2UUfQnbRySK7aFQgu2jUQHbRKUd20YeQXXTKkF10ImQXfQjZRSeL7KJRgeyiUQPZRacc2UWfuvfrycl1cvK12lPKMEVObOx2JCdbYnYpt+3FbkOScg7njAsfu1/EJ9NEt7fErj9JVDG7kOucjl17kggdsvKHLOIwVe6vjF1/MrIlT0i2h2O3IQn1Xtz2cshjtyMJ5OQkNhMp0MDUSRqTi2Z2QyoWdfdu+t3Jy8pJ3MkzbHtQ8IDKuPAZG4N6BI9w05kofD1k5Wjsdqx4hGVAehAyhQ4NZAotCmQKLSwyhQ6ETKEHYVmoDhkyhQ6ETKEHIVPo0ECm0AKZQg1kCiWQKRRBplACmUIJZApFkCmUIPI78KpxJfK8vb/SHgv+vfYJL+PvKcPhVcUFBuP4XEU/zo7uO2LCuHCxTOy9rmfgDdnOqS6GJ3zyqN+ylt+1qPfu4sX6y4ecPFy4I/DZvGVn7cjW8p3s/1iwjA9LxlKvP1hDNpwxLG3D4QZxOBKtGAAAAAAAAAAAAKj12i/HuPu4ynQVFAAAAABJRU5ErkJggg=="
+      />
+    </defs>
+  </svg>
+);
+
 export const AvatarIcon = ({ size }: Props) => (
   <svg
     width={size ? size : 65}
