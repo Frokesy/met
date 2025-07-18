@@ -3,13 +3,21 @@ import { Pencil, Trash2, UserPlus, Users } from "lucide-react";
 import MainContainer from "../../components/containers/MainContainer";
 import { AvatarIcon } from "../../components/svgs/Icons";
 import AddPersonnelModal from "../../components/modals/AddPersonnelModal";
+import { AnimatePresence } from "framer-motion";
+
+export type PersonnelType = {
+  id: number;
+  name: string;
+  securityId: string;
+  unit: string;
+  enlistmentDate: string;
+  status: string;
+  rank: string;
+  pic?: string;
+};
 
 const Personnel = () => {
-  const [showModal, setShowModal] = useState(false);
-
-  const handleOpenModal = () => setShowModal(true);
-
-  const personnel = [
+  const [personnel, setPersonnel] = useState<PersonnelType[]>([
     {
       id: 1,
       name: "John Doe",
@@ -18,7 +26,7 @@ const Personnel = () => {
       enlistmentDate: "2022-01-01",
       status: "Active",
       rank: "Private",
-      pic: "https://example.com/john-doe.jpg",
+      pic: "",
     },
     {
       id: 2,
@@ -28,7 +36,7 @@ const Personnel = () => {
       enlistmentDate: "2021-06-15",
       status: "Inactive",
       rank: "Corporal",
-      pic: "https://example.com/jane-smith.jpg",
+      pic: "",
     },
     {
       id: 3,
@@ -38,9 +46,36 @@ const Personnel = () => {
       enlistmentDate: "2020-12-31",
       status: "Active",
       rank: "Sergeant",
-      pic: "https://example.com/bob-johnson.jpg",
+      pic: "",
     },
-  ];
+  ]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedPersonnel, setSelectedPersonnel] = useState<
+    PersonnelType | undefined | null
+  >(null);
+
+  const handleAdd = () => {
+    setSelectedPersonnel(null);
+    setShowModal(true);
+  };
+
+  const handleEdit = (p: PersonnelType) => {
+    setSelectedPersonnel(p);
+    setShowModal(true);
+  };
+
+  const handleSave = (newPersonnel: PersonnelType | undefined | null) => {
+    setPersonnel((prev) => {
+      const exists = prev.find((p) => p.id === newPersonnel?.id);
+      if (exists) {
+        return prev.map((p) => (p.id === newPersonnel?.id ? newPersonnel : p));
+      } else {
+        return [...prev, { ...newPersonnel, id: Date.now() }];
+      }
+    });
+    setShowModal(false);
+  };
 
   return (
     <MainContainer active="personnel">
@@ -50,7 +85,7 @@ const Personnel = () => {
         </span>
 
         <button
-          onClick={handleOpenModal}
+          onClick={handleAdd}
           className="py-2 px-6 bg-cyan-600 text-[#fff] hover:bg-cyan-800 cursor-pointer transition rounded-lg font-semibold text-lg flex items-center space-x-3"
         >
           <UserPlus />
@@ -65,7 +100,7 @@ const Personnel = () => {
             className="flex items-center justify-between bg-[#0d1329] text-white p-4 rounded-lg shadow-sm hover:shadow-md transition"
           >
             <div className="flex items-center gap-4">
-              {!p.pic ? (
+              {p.pic ? (
                 <img
                   src={p.pic}
                   alt={p.name}
@@ -109,7 +144,10 @@ const Personnel = () => {
             </div>
 
             <div className="flex gap-3">
-              <button className="hover:text-yellow-400 transition">
+              <button
+                onClick={() => handleEdit(p)}
+                className="hover:text-yellow-400 transition"
+              >
                 <Pencil size={18} color="blue" />
               </button>
               <button className="hover:text-red-500 transition">
@@ -120,7 +158,15 @@ const Personnel = () => {
         ))}
       </div>
 
-      {showModal && <AddPersonnelModal onClose={() => setShowModal(false)} />}
+      <AnimatePresence>
+        {showModal && (
+          <AddPersonnelModal
+            onClose={() => setShowModal(false)}
+            onSave={handleSave}
+            personnel={selectedPersonnel}
+          />
+        )}
+      </AnimatePresence>
     </MainContainer>
   );
 };
