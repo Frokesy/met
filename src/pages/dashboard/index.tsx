@@ -6,7 +6,7 @@ import {
   MoneyIcon,
 } from "../../components/svgs/Icons";
 
-const Overview = () => {
+const Dashboard = () => {
   const topPanelItems = [
     {
       id: 1,
@@ -28,7 +28,7 @@ const Overview = () => {
     },
   ];
   return (
-    <MainContainer active="overview">
+    <MainContainer active="dashboard">
       <div className="px-6 pt-10 text-[#2E4765]">
         <div className="w-[100%] p-4 bg-[#fff] shadow-md rounded-xl border border-[#ccc]">
           <h2 className="text-[24px]">Welcome John</h2>
@@ -81,4 +81,4 @@ const Overview = () => {
   );
 };
 
-export default Overview;
+export default Dashboard;

@@ -180,6 +180,25 @@ export const RightArrowIcon = () => (
   </svg>
 );
 
+export const CaretDown = ({ color }: { color?: string }) => (
+  <svg
+    width="17"
+    height="16"
+    viewBox="0 0 17 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M13.78 5.9668L9.4333 10.3135C8.91997 10.8268 8.07997 10.8268 7.56664 10.3135L3.21997 5.9668"
+      stroke={color ? color : "#fff"}
+      strokeWidth="1.5"
+      strokeMiterlimit="10"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const AvatarIcon = ({ size }: Props) => (
   <svg
     width={size ? size : 65}

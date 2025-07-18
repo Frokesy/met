@@ -17,7 +17,6 @@ const Auth = () => {
   return (
     <div className="relative w-full min-h-screen pt-10 bg-[#010725] flex items-center justify-center">
       <div className="w-full max-w-md mx-auto bg-gray-900 text-white rounded-xl shadow-lg p-8">
-        {/* Header */}
         <div className="flex flex-col items-center space-y-4 mb-8">
           <img src="/assets/logo.svg" alt="logo" className="w-16 h-16" />
           <p className="text-2xl text-cyan-500 font-semibold uppercase tracking-widest">

@@ -7,13 +7,12 @@ interface Props {
 }
 
 const MainContainer = ({ children, active }: Props) => {
-  console.log(active);
   return (
-    <div className="h-[99vh] overflow-y-hidden flex">
+    <div className="h-[100vh] bg-[#010725] text-[#ffffff] overflow-y-hidden flex">
       <div className="w-[20%]">
         <SideNav active={active} />
       </div>
-      <div className="bg-[#EFF1F7] w-[80%]">
+      <div className=" w-[80%]">
         <TopNav active={active} />
         {children}
       </div>

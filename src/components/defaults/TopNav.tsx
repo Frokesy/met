@@ -1,4 +1,5 @@
-import { AvatarIcon, HamburgerIcon } from "../svgs/Icons";
+import { BellIcon } from "lucide-react";
+import { AvatarIcon, CaretDown, HamburgerIcon } from "../svgs/Icons";
 
 export interface NavProps {
   active: string;
@@ -12,13 +13,25 @@ const TopNav = ({ active }: NavProps) => {
         <h2 className="text-[24px] capitalize">{active}</h2>
       </div>
       <div className="flex items-center space-x-14">
-        <div className="flex items-center space-x-3">
-          <AvatarIcon />
-          <p className="text-[24px]">John</p>
+        <div
+          className="cursor-pointer"
+          // onClick={() =>
+          //   setShowNotificationDropdown(!showNotificationDropdown)
+          // }
+        >
+          <BellIcon />
         </div>
-        <button className="py-2 px-6 rounded-xl bg-[#16BBE5] cursor-pointer text-[#2E4765] text-[20px]">
-          Logout
-        </button>
+        <div className="hidden lg:block relative">
+          <div
+            // onClick={() => setShowUserDropdown(!showUserDropdown)}
+            className="flex items-center space-x-3 bg-[#1B1B2F] cursor-pointer text-[#fff] py-2 px-6 rounded-full"
+          >
+            <AvatarIcon size={42} />
+            <span className="ml-2">System Admin</span>
+            <CaretDown />
+          </div>
+          {/* {showUserDropdown && <UserDropdown />} */}
+        </div>
       </div>
     </div>
   );
