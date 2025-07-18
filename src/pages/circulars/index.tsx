@@ -40,7 +40,7 @@ const Circulars = () => {
               <SearchIcon />
               <input
                 type="text"
-                placeholder="Search notes"
+                placeholder="Search circulars"
                 className="outline-none border-none bg-inherit"
               />
             </div>
