@@ -1,10 +1,11 @@
 import { NavLink } from "react-router-dom";
 import type { NavProps } from "./TopNav";
-import { Home } from "lucide-react";
+import { Home, ShieldUser } from "lucide-react";
 
 const SideNav = ({ active }: NavProps) => {
   const items = [
     { label: "Dashboard", route: "/dashboard", icon: <Home /> },
+    { label: "Personnel", route: "/personnel", icon: <ShieldUser /> },
     { label: "Assignments", route: "/assignments" },
     { label: "Internal Marks", route: "/internal-marks" },
     { label: "Semester Results", route: "/semester-results" },
@@ -28,7 +29,7 @@ const SideNav = ({ active }: NavProps) => {
           <NavLink
             to={item.route}
             key={index}
-            className={`p-4 rounded-md flex space-x-3 ${active === item.label.toLowerCase() ? "bg-[#16BBE5] cursor-pointer text-[#2E4765] font-semibold" : "hover:bg-[#2E4765]/10 hover:text-[#2E4765]"} text-[18px]`}
+            className={`p-4 rounded-md flex space-x-3 ${active === item.label.toLowerCase() ? "bg-[#16BBE5] cursor-pointer text-[#2E4765] font-semibold" : "hover:bg-[#2E4765]/10 hover:text-gray-400"} text-[18px]`}
           >
             {item.icon && item.icon}
             <span>{item.label}</span>

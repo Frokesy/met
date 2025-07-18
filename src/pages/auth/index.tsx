@@ -31,7 +31,9 @@ const Auth = () => {
           {roleOptions.map((role) => (
             <div
               key={role.value}
-              onClick={() => setLoginType(role.value as any)}
+              onClick={() =>
+                setLoginType(role.value as "officer" | "commander" | "admin")
+              }
               className={`flex flex-col items-center justify-center py-4 px-2 rounded-lg cursor-pointer transition-all ${
                 loginType === role.value
                   ? "bg-cyan-700 text-white scale-105"

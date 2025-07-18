@@ -14,7 +14,7 @@ const MainContainer = ({ children, active }: Props) => {
       </div>
       <div className=" w-[80%]">
         <TopNav active={active} />
-        {children}
+        <div className="px-6 pt-10">{children}</div>
       </div>
     </div>
   );
