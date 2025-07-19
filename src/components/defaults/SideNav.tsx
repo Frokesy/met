@@ -1,20 +1,26 @@
 import { NavLink } from "react-router-dom";
 import type { NavProps } from "./TopNav";
-import { Home, ShieldUser } from "lucide-react";
+import {
+  BookOpen,
+  CheckCircle,
+  History,
+  Home,
+  Menu,
+  Settings,
+  ShieldUser,
+  Users2,
+} from "lucide-react";
 
 const SideNav = ({ active }: NavProps) => {
   const items = [
     { label: "Dashboard", route: "/dashboard", icon: <Home /> },
     { label: "Personnel", route: "/personnel", icon: <ShieldUser /> },
-    { label: "Assignments", route: "/assignments" },
-    { label: "Internal Marks", route: "/internal-marks" },
-    { label: "Semester Results", route: "/semester-results" },
-    { label: "Download Notes", route: "/notes" },
-    { label: "Pay Dues", route: "/pay-dues" },
-    { label: "Dues & Approvals", route: "/dues" },
-    { label: "Time Table", route: "/timetable" },
-    { label: "Circulars", route: "/circulars" },
-    { label: "Events", route: "/events" },
+    { label: "Duty Roaster", route: "/duty-roaster", icon: <Menu /> },
+    { label: "Attendance", route: "/attendance", icon: <BookOpen /> },
+    { label: "Verifications", route: "/verifications", icon: <CheckCircle /> },
+    { label: "User Accounts", route: "/user-accounts", icon: <Users2 /> },
+    { label: "Activity Logs", route: "/activity-logs", icon: <History /> },
+    { label: "System Settings", route: "/system-settings", icon: <Settings /> },
   ];
   return (
     <div className="p-4 border-r border-[#ccc] h-[100%]">
