@@ -3,11 +3,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./pages/auth";
 import SemesterResults from "./pages/semester_results";
 import Notes from "./pages/notes";
-import Circulars from "./pages/circulars";
 import Dashboard from "./pages/dashboard";
 import Personnel from "./pages/personnel";
 import DutyRoaster from "./pages/duty_roaster";
 import Attendance from "./pages/attendance";
+import Verifications from "./pages/verifications";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -16,9 +16,9 @@ const App = () => {
     { path: "/personnel", element: <Personnel /> },
     { path: "/duty-roaster", element: <DutyRoaster /> },
     { path: "/attendance", element: <Attendance /> },
+    { path: "/verifications", element: <Verifications /> },
     { path: "/semester-results", element: <SemesterResults /> },
     { path: "/notes", element: <Notes /> },
-    { path: "/circulars", element: <Circulars /> },
   ]);
 
   return (
