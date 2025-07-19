@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.50.2",
     "@tailwindcss/vite": "^4.1.10",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.18.1",
     "lucide-react": "^0.518.0",
