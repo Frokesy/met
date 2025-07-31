@@ -9,6 +9,7 @@ import DutyRoaster from "./pages/duty_roaster";
 import Attendance from "./pages/attendance";
 import Verifications from "./pages/verifications";
 import UserAccounts from "./pages/user_accounts";
+import ActivityLogs from "./pages/activity_logs";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -20,7 +21,8 @@ const App = () => {
     { path: "/verifications", element: <Verifications /> },
     { path: "/semester-results", element: <SemesterResults /> },
     { path: "/notes", element: <Notes /> },
-    { path: "/user-accounts", element: <UserAccounts /> }
+    { path: "/user-accounts", element: <UserAccounts /> },
+    { path: "/activity-logs", element: <ActivityLogs /> },
   ]);
 
   return (
