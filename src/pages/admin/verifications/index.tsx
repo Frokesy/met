@@ -1,6 +1,6 @@
-import MainContainer from "../../components/containers/MainContainer";
+import MainContainer from "../../../components/containers/MainContainer";
 import { CheckCircle2, XCircle, FileText } from "lucide-react";
-import { AvatarIcon } from "../../components/svgs/Icons";
+import { AvatarIcon } from "../../../components/svgs/Icons";
 
 const dummyVerifications = [
   {

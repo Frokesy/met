@@ -1,4 +1,4 @@
-import MainContainer from "../../components/containers/MainContainer";
+import MainContainer from "../../../components/containers/MainContainer";
 
 const Attendance = () => {
   return (

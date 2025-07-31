@@ -1,10 +1,10 @@
-import MainContainer from "../../components/containers/MainContainer";
+import MainContainer from "../../../components/containers/MainContainer";
 import {
   DownloadIcon,
   LeftArrowIcon,
   RightArrowIcon,
   SearchIcon,
-} from "../../components/svgs/Icons";
+} from "../../../components/svgs/Icons";
 
 const notesData = [
   {

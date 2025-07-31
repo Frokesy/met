@@ -1,4 +1,4 @@
-import MainContainer from "../../components/containers/MainContainer";
+import MainContainer from "../../../components/containers/MainContainer";
 import { Clock, User } from "lucide-react";
 
 const logs = [

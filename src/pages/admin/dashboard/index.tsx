@@ -1,5 +1,5 @@
 import { Clock, FileWarning, ShieldUser, UserPen } from "lucide-react";
-import MainContainer from "../../components/containers/MainContainer";
+import MainContainer from "../../../components/containers/MainContainer";
 
 const Dashboard = () => {
   return (

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Pencil, Trash2, UserPlus, Users } from "lucide-react";
-import MainContainer from "../../components/containers/MainContainer";
-import { AvatarIcon } from "../../components/svgs/Icons";
-import AddPersonnelModal from "../../components/modals/AddPersonnelModal";
+import MainContainer from "../../../components/containers/MainContainer";
+import { AvatarIcon } from "../../../components/svgs/Icons";
+import AddPersonnelModal from "../../../components/modals/AddPersonnelModal";
 import { AnimatePresence } from "framer-motion";
 
 export type PersonnelType = {

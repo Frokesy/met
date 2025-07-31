@@ -1,4 +1,4 @@
-import MainContainer from "../../components/containers/MainContainer";
+import MainContainer from "../../../components/containers/MainContainer";
 import { useState } from "react";
 import { Trash2, Plus } from "lucide-react";
 

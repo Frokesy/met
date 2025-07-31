@@ -1,4 +1,4 @@
-import MainContainer from "../../components/containers/MainContainer";
+import MainContainer from "../../../components/containers/MainContainer";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addDays, startOfWeek, endOfWeek, format } from "date-fns";
