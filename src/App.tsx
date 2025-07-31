@@ -11,6 +11,7 @@ import Verifications from "./pages/admin/verifications";
 import UserAccounts from "./pages/admin/user_accounts";
 import ActivityLogs from "./pages/admin/activity_logs";
 import SystemSettings from "./pages/admin/settings";
+import OfficerDashboard from "./pages/officer/dashboard";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -26,6 +27,9 @@ const App = () => {
     { path: "/user-accounts", element: <UserAccounts /> },
     { path: "/activity-logs", element: <ActivityLogs /> },
     { path: "/system-settings", element: <SystemSettings /> },
+
+    // officer routes
+    { path: "/officer/dashboard", element: <OfficerDashboard /> },
   ]);
 
   return (

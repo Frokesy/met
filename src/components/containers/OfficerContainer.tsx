@@ -1,5 +1,5 @@
 import OfficerSideNav from "../defaults/OfficerSideNav";
-import TopNav from "../defaults/TopNav";
+import OfficerTopNav from "../defaults/OfficerTopNav";
 
 interface Props {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ const OfficerContainer = ({ children, active }: Props) => {
         <OfficerSideNav active={active} />
       </div>
       <div className=" w-[80%]">
-        <TopNav active={active} />
+        <OfficerTopNav active={active} />
         <div className="px-6 pt-10">{children}</div>
       </div>
     </div>
