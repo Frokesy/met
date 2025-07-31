@@ -12,6 +12,7 @@ import UserAccounts from "./pages/admin/user_accounts";
 import ActivityLogs from "./pages/admin/activity_logs";
 import SystemSettings from "./pages/admin/settings";
 import OfficerDashboard from "./pages/officer/dashboard";
+import MyDuties from "./pages/officer/duties";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -30,6 +31,7 @@ const App = () => {
 
     // officer routes
     { path: "/officer/dashboard", element: <OfficerDashboard /> },
+    { path: "/officer/my-duties", element: <MyDuties /> },
   ]);
 
   return (
