@@ -15,6 +15,7 @@ import OfficerDashboard from "./pages/officer/dashboard";
 import MyDuties from "./pages/officer/duties";
 import OfficerAttendance from "./pages/officer/attendance";
 import Requests from "./pages/officer/requests";
+import OfficerSettings from "./pages/officer/settings";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -36,6 +37,7 @@ const App = () => {
     { path: "/officer/my-duties", element: <MyDuties /> },
     { path: "/officer/attendance", element: <OfficerAttendance /> },
     { path: "/officer/requests", element: <Requests /> },
+    { path: "/officer/settings", element: <OfficerSettings /> },
   ]);
 
   return (
