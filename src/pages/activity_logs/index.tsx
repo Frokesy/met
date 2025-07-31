@@ -26,30 +26,6 @@ const logs = [
     timestamp: "2025-07-29 04:40 PM",
     color: "red",
   },
-  {
-    id: 4,
-    name: "John Doe",
-    role: "Commander",
-    action: "Approved verification document for Sarah Lee",
-    timestamp: "2025-07-30 10:23 AM",
-    color: "green",
-  },
-  {
-    id: 5,
-    name: "Mary Smith",
-    role: "Officer",
-    action: "Logged into the system",
-    timestamp: "2025-07-30 09:01 AM",
-    color: "blue",
-  },
-  {
-    id: 6,
-    name: "Admin",
-    role: "Admin",
-    action: "Deleted personnel record for Daniel",
-    timestamp: "2025-07-29 04:40 PM",
-    color: "red",
-  },
 ];
 
 const ActivityLogs = () => {
