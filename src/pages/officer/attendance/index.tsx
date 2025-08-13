@@ -1,21 +1,66 @@
 import { CheckCircle, Clock9, CalendarDays } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OfficerContainer from "../../../components/containers/OfficerContainer";
+import supabase from "../../../lib/supabase";
 
 const OfficerAttendance = () => {
   const [status, setStatus] = useState<"not_checked_in" | "checked_in" | "checked_out">("not_checked_in");
   const [checkInTime, setCheckInTime] = useState<string | null>(null);
   const [checkOutTime, setCheckOutTime] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const handleAction = () => {
-    const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  // Fetch user session & today's record
+  useEffect(() => {
+    const getData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+      setUserId(session.user.id);
+
+      const today = new Date().toISOString().split("T")[0];
+      const { data } = await supabase
+        .from("attendance")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .eq("date", today)
+        .single();
+
+      if (data) {
+        if (data.check_in_time && !data.check_out_time) {
+          setStatus("checked_in");
+          setCheckInTime(data.check_in_time);
+        } else if (data.check_out_time) {
+          setStatus("checked_out");
+          setCheckInTime(data.check_in_time);
+          setCheckOutTime(data.check_out_time);
+        }
+      }
+    };
+
+    getData();
+  }, []);
+
+  const handleAction = async () => {
+    if (!userId) return;
+
+    const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const today = new Date().toISOString().split("T")[0];
 
     if (status === "not_checked_in") {
+      await supabase.from("attendance").insert([
+        { user_id: userId, date: today, check_in_time: nowTime }
+      ]);
       setStatus("checked_in");
-      setCheckInTime(now);
+      setCheckInTime(nowTime);
+
     } else if (status === "checked_in") {
+      await supabase
+        .from("attendance")
+        .update({ check_out_time: nowTime })
+        .eq("user_id", userId)
+        .eq("date", today);
+
       setStatus("checked_out");
-      setCheckOutTime(now);
+      setCheckOutTime(nowTime);
     }
   };
 
@@ -59,11 +104,6 @@ const OfficerAttendance = () => {
             <span>{status === "not_checked_in" ? "Check In" : "Check Out"}</span>
           </button>
         )}
-      </div>
-
-      {/* Optional history block to integrate later */}
-      <div className="text-gray-400 text-sm mt-10 text-center">
-        Attendance history will appear here once implemented.
       </div>
     </OfficerContainer>
   );

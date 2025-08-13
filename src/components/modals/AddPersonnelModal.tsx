@@ -92,15 +92,16 @@ const AddPersonnelModal = ({
           <h2 className="text-xl font-bold text-white">
             {personnel ? "Edit Personnel" : "Add New Personnel"}
           </h2>
-          <button onClick={onClose}>
-            <X className="text-gray-400 hover:text-red-500" />
+          <button onClick={onClose} type="button" aria-label="Close modal" title="Close modal">
+            <X aria-hidden="true" className="text-gray-400 hover:text-red-500" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-white">Name</label>
+            <label htmlFor="name" className="text-sm font-medium text-white">Name</label>
             <input
+              id="name"
               name="name"
               type="text"
               value={formData.name}
@@ -111,10 +112,11 @@ const AddPersonnelModal = ({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-white">
+            <label htmlFor="securityId" className="text-sm font-medium text-white">
               Security ID
             </label>
             <input
+              id="securityId"
               name="securityId"
               type="text"
               value={formData.securityId}
@@ -125,8 +127,9 @@ const AddPersonnelModal = ({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-white">Unit</label>
+            <label htmlFor="unit" className="text-sm font-medium text-white">Unit</label>
             <input
+              id="unit"
               name="unit"
               type="text"
               value={formData.unit}
@@ -137,10 +140,11 @@ const AddPersonnelModal = ({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-white">
+            <label htmlFor="enlistmentDate" className="text-sm font-medium text-white">
               Enlistment Date
             </label>
             <input
+              id="enlistmentDate"
               name="enlistmentDate"
               type="date"
               value={formData.enlistmentDate}
@@ -150,8 +154,9 @@ const AddPersonnelModal = ({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-white">Status</label>
+            <label htmlFor="status" className="text-sm font-medium text-white">Status</label>
             <select
+              id="status"
               name="status"
               value={formData.status}
               onChange={handleChange}
@@ -163,8 +168,9 @@ const AddPersonnelModal = ({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-white">Rank</label>
+            <label htmlFor="rank" className="text-sm font-medium text-white">Rank</label>
             <input
+              id="rank"
               name="rank"
               type="text"
               value={formData.rank}
@@ -175,8 +181,9 @@ const AddPersonnelModal = ({
           </div>
 
           <div>
-            <label className="text-sm font-medium text-white">Photo</label>
+            <label htmlFor="photo" className="text-sm font-medium text-white">Photo</label>
             <input
+              id="photo"
               type="file"
               accept="image/*"
               onChange={handleFileChange}

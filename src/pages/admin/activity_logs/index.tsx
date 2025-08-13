@@ -39,8 +39,15 @@ const ActivityLogs = () => {
         {logs.map((log) => (
           <div key={log.id} className="relative">
             <div
-              style={{ backgroundColor: log.color }}
-              className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-4 border-gray-900`}
+              className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-4 border-gray-900 ${
+                log.color === "green"
+                  ? "log-dot-green"
+                  : log.color === "blue"
+                  ? "log-dot-blue"
+                  : log.color === "red"
+                  ? "log-dot-red"
+                  : ""
+              }`}
             />
             <div className="bg-gray-800 p-4 rounded-md shadow-md">
               <div className="flex items-center gap-2 mb-2 text-sm text-gray-300">

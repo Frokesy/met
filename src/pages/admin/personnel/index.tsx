@@ -3,18 +3,8 @@ import { Pencil, Trash2, UserPlus, Users } from "lucide-react";
 import MainContainer from "../../../components/containers/MainContainer";
 import { AvatarIcon } from "../../../components/svgs/Icons";
 import AddPersonnelModal from "../../../components/modals/AddPersonnelModal";
+import type { PersonnelType } from "../../../components/modals/AddPersonnelModal";
 import { AnimatePresence } from "framer-motion";
-
-export type PersonnelType = {
-  id: number;
-  name: string;
-  securityId: string;
-  unit: string;
-  enlistmentDate: string;
-  status: string;
-  rank: string;
-  pic?: string;
-};
 
 const Personnel = () => {
   const [personnel, setPersonnel] = useState<PersonnelType[]>([
@@ -65,13 +55,17 @@ const Personnel = () => {
     setShowModal(true);
   };
 
-  const handleSave = (newPersonnel: PersonnelType | undefined | null) => {
+  const handleSave = (data: PersonnelType & { file?: File | null }) => {
+    if (!data.name || !data.securityId || !data.unit || !data.enlistmentDate || !data.status || !data.rank) {
+      return; // Don't save if required fields are missing
+    }
+
     setPersonnel((prev) => {
-      const exists = prev.find((p) => p.id === newPersonnel?.id);
+      const exists = prev.find((p) => p.id === data.id);
       if (exists) {
-        return prev.map((p) => (p.id === newPersonnel?.id ? newPersonnel : p));
+        return prev.map((p) => (p.id === data.id ? data : p));
       } else {
-        return [...prev, { ...newPersonnel, id: Date.now() }];
+        return [...prev, { ...data, id: Date.now() }];
       }
     });
     setShowModal(false);
@@ -147,10 +141,14 @@ const Personnel = () => {
               <button
                 onClick={() => handleEdit(p)}
                 className="hover:text-yellow-400 transition"
+                aria-label={`Edit ${p.name}`}
               >
                 <Pencil size={18} color="blue" />
               </button>
-              <button className="hover:text-red-500 transition">
+              <button 
+                className="hover:text-red-500 transition"
+                aria-label={`Delete ${p.name}`}
+              >
                 <Trash2 size={18} color="red" />
               </button>
             </div>
