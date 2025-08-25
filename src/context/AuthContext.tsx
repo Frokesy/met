@@ -12,6 +12,7 @@ type Officer = {
   user_id: string;
   email: string;
   security_id: string;
+  full_name: string;
 };
 
 type AuthContextType = {

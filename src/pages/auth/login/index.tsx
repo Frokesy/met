@@ -23,7 +23,7 @@ const OfficerLogin = () => {
 
       const { data: officer, error: officerError } = await supabase
         .from("officers")
-        .select("email, user_id, security_id")
+        .select("user_id, email, security_id, full_name")
         .eq("security_id", securityId)
         .single();
 
