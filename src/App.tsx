@@ -1,6 +1,5 @@
 import { AnimatePresence } from "framer-motion";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Auth from "./pages/auth";
 import SemesterResults from "./pages/admin/semester_results";
 import Notes from "./pages/admin/notes";
 import Dashboard from "./pages/admin/dashboard";
@@ -16,11 +15,14 @@ import MyDuties from "./pages/officer/duties";
 import OfficerAttendance from "./pages/officer/attendance";
 import Requests from "./pages/officer/requests";
 import OfficerSettings from "./pages/officer/settings";
+import OfficerLogin from "./pages/auth/login";
+import AdminLogin from "./pages/admin/auth/login";
+import OfficerSignup from "./pages/auth/signup";
 
 const App = () => {
   const router = createBrowserRouter([
     // admin routes
-    { path: "/", element: <Auth /> },
+    { path: "/admin/auth", element: <AdminLogin /> },
     { path: "/dashboard", element: <Dashboard /> },
     { path: "/personnel", element: <Personnel /> },
     { path: "/duty-roaster", element: <DutyRoaster /> },
@@ -33,6 +35,8 @@ const App = () => {
     { path: "/system-settings", element: <SystemSettings /> },
 
     // officer routes
+    { path: "/", element: <OfficerLogin /> },
+    { path: "/signup", element: <OfficerSignup /> },
     { path: "/officer/dashboard", element: <OfficerDashboard /> },
     { path: "/officer/my-duties", element: <MyDuties /> },
     { path: "/officer/attendance", element: <OfficerAttendance /> },
