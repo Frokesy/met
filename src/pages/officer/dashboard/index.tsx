@@ -62,16 +62,32 @@ const OfficerDashboard = () => {
 
       const { data: attendanceData } = await supabase
         .from("attendance")
-        .select("status")
+        .select("status, marked_at")
         .eq("user_id", userId)
         .gte("marked_at", startOfDay(now).toISOString())
         .lte("marked_at", endOfDay(now).toISOString())
-        .single();
+        .order("marked_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
       if (attendanceData) {
-        setAttendanceStatus(
-          `You have marked attendance: ${attendanceData.status}`
-        );
+        const markedTime = new Date(
+          attendanceData.marked_at
+        ).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        let message = "";
+        if (attendanceData.status === "checked_in") {
+          message = `You have checked in for today at ${markedTime}`;
+        } else if (attendanceData.status === "checked_out") {
+          message = `You have checked out for today at ${markedTime}`;
+        } else {
+          message = `You have marked attendance for today at ${markedTime}`;
+        }
+
+        setAttendanceStatus(message);
       } else {
         setAttendanceStatus("You have not marked attendance today");
       }
