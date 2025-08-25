@@ -71,22 +71,14 @@ const DutyRoaster = () => {
 
       <div className="flex justify-between mb-6 bg-gray-900 px-6 py-4 rounded-xl items-center">
         <div className="flex items-center gap-4 text-gray-300">
-          <button 
-            onClick={goToPreviousWeek} 
-            className="hover:text-white"
-            aria-label="Go to previous week"
-          >
+          <button onClick={goToPreviousWeek} className="hover:text-white">
             <ChevronLeft />
           </button>
           <div className="text-sm">
             <span className="font-medium">Week:</span>{" "}
             {format(weekStart, "MMM dd")} - {format(weekEnd, "MMM dd")}
           </div>
-          <button 
-            onClick={goToNextWeek} 
-            className="hover:text-white"
-            aria-label="Go to next week"
-          >
+          <button onClick={goToNextWeek} className="hover:text-white">
             <ChevronRight />
           </button>
         </div>
@@ -191,7 +183,6 @@ const DutyRoaster = () => {
                 onChange={(e) => assignUnit(e.target.value)}
                 className="w-full p-2 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 defaultValue=""
-                aria-label="Select unit for duty assignment"
               >
                 <option value="" disabled>
                   Select a unit

@@ -1,7 +1,5 @@
 import { AnimatePresence } from "framer-motion";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Auth from "./pages/auth";
 import SemesterResults from "./pages/admin/semester_results";
 import Notes from "./pages/admin/notes";
@@ -18,7 +16,6 @@ import MyDuties from "./pages/officer/duties";
 import OfficerAttendance from "./pages/officer/attendance";
 import Requests from "./pages/officer/requests";
 import OfficerSettings from "./pages/officer/settings";
-import TestSupabase from "../src/pages/test-supabase";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -35,25 +32,18 @@ const App = () => {
     { path: "/activity-logs", element: <ActivityLogs /> },
     { path: "/system-settings", element: <SystemSettings /> },
 
-
     // officer routes
     { path: "/officer/dashboard", element: <OfficerDashboard /> },
     { path: "/officer/my-duties", element: <MyDuties /> },
     { path: "/officer/attendance", element: <OfficerAttendance /> },
     { path: "/officer/requests", element: <Requests /> },
     { path: "/officer/settings", element: <OfficerSettings /> },
-
-    // test route
-  { path: "/test-supabase", element: <TestSupabase /> },
   ]);
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        <RouterProvider router={router} />
-      </AnimatePresence>
-      <ToastContainer position="bottom-right" autoClose={5000} />
-    </>
+    <AnimatePresence mode="wait">
+      <RouterProvider router={router} />
+    </AnimatePresence>
   );
 };
 

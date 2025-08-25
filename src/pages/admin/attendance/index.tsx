@@ -12,16 +12,13 @@ const Attendance = () => {
         <input
           type="date"
           className="bg-gray-800 text-white px-4 py-2 rounded-md border border-gray-700"
-          title="Select start date"
-          placeholder="Start date"
         />
         <span>To:</span>
         <input
           type="date"
-          placeholder="End date"
           className="bg-gray-800 text-white px-4 py-2 rounded-md border border-gray-700"
         />
-        <select className="bg-gray-800 text-white px-4 py-2 rounded-md border border-gray-700" title="Select unit">
+        <select className="bg-gray-800 text-white px-4 py-2 rounded-md border border-gray-700">
           <option value="">All Units</option>
           <option>Unit A</option>
           <option>Unit B</option>
