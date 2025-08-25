@@ -4,11 +4,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 const ADMIN_EMAIL = `admin-8h97uets@sfims.local`;
 const ADMIN_PASSWORD = "st83a31l";
 
-console.log("🔐 Admin Credentials:", {
-  email: ADMIN_EMAIL,
-  password: ADMIN_PASSWORD,
-});
-
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
