@@ -1,19 +1,58 @@
 import MainContainer from "../../../components/containers/MainContainer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, Plus } from "lucide-react";
+import { supabase } from "../../../../utils/supabaseClient";
 
 const SystemSettings = () => {
-  const [units, setUnits] = useState<string[]>(["Unit A", "Unit B"]);
+  const [settings, setSettings] = useState<{ [key: string]: string }>({});
+  const [units, setUnits] = useState<string[]>([]);
   const [newUnit, setNewUnit] = useState("");
 
-  const handleAddUnit = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: settingsData } = await supabase
+        .from("system_settings")
+        .select("*");
+      const { data: unitsData } = await supabase.from("units").select("*");
+
+      if (settingsData) {
+        const mapped: { [key: string]: string } = {};
+        settingsData.forEach((s) => {
+          mapped[s.key] = s.value;
+        });
+        setSettings(mapped);
+      }
+
+      if (unitsData) {
+        setUnits(unitsData.map((u) => u.name));
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSettingChange = async (key: string, value: string) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+
+    await supabase
+      .from("system_settings")
+      .upsert({ key, value }, { onConflict: "key" });
+  };
+
+  const handleAddUnit = async () => {
     if (newUnit.trim() && !units.includes(newUnit)) {
-      setUnits([...units, newUnit.trim()]);
-      setNewUnit("");
+      const { error } = await supabase
+        .from("units")
+        .insert({ name: newUnit.trim() });
+      if (!error) {
+        setUnits([...units, newUnit.trim()]);
+        setNewUnit("");
+      }
     }
   };
 
-  const handleDeleteUnit = (unit: string) => {
+  const handleDeleteUnit = async (unit: string) => {
+    await supabase.from("units").delete().eq("name", unit);
     setUnits(units.filter((u) => u !== unit));
   };
 
@@ -26,19 +65,49 @@ const SystemSettings = () => {
       <div className="space-y-10 overflow-y-auto max-h-[calc(100vh-200px)] py-10">
         <SettingsCard title="General">
           <div className="grid gap-4 md:grid-cols-2">
-            <SettingInput label="System Name" placeholder="e.g. SFIMS" />
-            <SettingInput label="Default Unit" placeholder="e.g. Unit A" />
-            <SettingToggle label="Maintenance Mode" />
+            <SettingInput
+              label="System Name"
+              value={settings["system_name"] || ""}
+              onChange={(v) => handleSettingChange("system_name", v)}
+              placeholder="e.g. SFIMS"
+            />
+            <SettingInput
+              label="Default Unit"
+              value={settings["default_unit"] || ""}
+              onChange={(v) => handleSettingChange("default_unit", v)}
+              placeholder="e.g. Unit A"
+            />
+            <SettingToggle
+              label="Maintenance Mode"
+              value={settings["maintenance_mode"] === "true"}
+              onChange={(v) =>
+                handleSettingChange("maintenance_mode", v ? "true" : "false")
+              }
+            />
           </div>
         </SettingsCard>
 
         <SettingsCard title="Security">
           <div className="grid gap-4 md:grid-cols-2 items-center">
-            <SettingInput label="Min Password Length" placeholder="e.g. 8" />
+            <SettingInput
+              label="Min Password Length"
+              value={settings["min_password_length"] || ""}
+              onChange={(v) => handleSettingChange("min_password_length", v)}
+              placeholder="e.g. 8"
+            />
             <div className="mt-8">
               <SettingToggle label="Enforce 2FA (Coming soon)" disabled />
             </div>
-            <SettingToggle label="Allow Password Reset" />
+            <SettingToggle
+              label="Allow Password Reset"
+              value={settings["allow_password_reset"] === "true"}
+              onChange={(v) =>
+                handleSettingChange(
+                  "allow_password_reset",
+                  v ? "true" : "false"
+                )
+              }
+            />
           </div>
         </SettingsCard>
 
@@ -46,6 +115,8 @@ const SystemSettings = () => {
           <div className="grid gap-4">
             <SettingInput
               label="Available Roles"
+              value={settings["roles"] || ""}
+              onChange={(v) => handleSettingChange("roles", v)}
               placeholder="e.g. Officer, Commander, Admin"
             />
             <button className="bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-md w-fit">
@@ -111,44 +182,46 @@ const SettingsCard = ({
 
 const SettingInput = ({
   label,
+  value,
+  onChange,
   placeholder,
 }: {
   label: string;
+  value: string;
+  onChange: (val: string) => void;
   placeholder?: string;
-}) => {
-  const [value, setValue] = useState("");
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="text-gray-300 text-sm mb-2">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder={placeholder}
-        className="p-3 bg-gray-700 text-white rounded-md outline-none"
-      />
-    </div>
-  );
-};
+}) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-gray-300 text-sm mb-2">{label}</label>
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="p-3 bg-gray-700 text-white rounded-md outline-none"
+    />
+  </div>
+);
 
 const SettingToggle = ({
   label,
+  value,
+  onChange,
   disabled,
 }: {
   label: string;
+  value?: boolean;
+  onChange?: (val: boolean) => void;
   disabled?: boolean;
-}) => {
-  const [enabled, setEnabled] = useState(false);
-  return (
-    <div className="flex items-center justify-between bg-gray-700 p-3 rounded-md">
-      <span className="text-gray-300">{label}</span>
-      <input
-        type="checkbox"
-        disabled={disabled}
-        checked={enabled}
-        onChange={() => setEnabled((prev) => !prev)}
-        className="scale-125 accent-blue-500"
-      />
-    </div>
-  );
-};
+}) => (
+  <div className="flex items-center justify-between bg-gray-700 p-3 rounded-md">
+    <span className="text-gray-300">{label}</span>
+    <input
+      type="checkbox"
+      disabled={disabled}
+      checked={!!value}
+      onChange={(e) => onChange && onChange(e.target.checked)}
+      className="scale-125 accent-blue-500"
+    />
+  </div>
+);

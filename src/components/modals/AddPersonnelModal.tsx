@@ -12,7 +12,6 @@ export interface PersonnelType {
   status: boolean;
   rank: string;
   password?: string;
-  pic?: string;
 }
 
 interface AddPersonnelModalProps {

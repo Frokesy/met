@@ -62,7 +62,6 @@ const Personnel = () => {
           created_at: newPersonnel.created_at,
           status: newPersonnel.status,
           rank: newPersonnel.rank,
-          pic: newPersonnel.pic || null,
         })
         .eq("id", newPersonnel.id)
         .select()
@@ -153,15 +152,8 @@ const Personnel = () => {
             className="flex items-center justify-between bg-[#0d1329] text-white p-4 rounded-lg shadow-sm hover:shadow-md transition"
           >
             <div className="flex items-center gap-4">
-              {p.pic ? (
-                <img
-                  src={p.pic}
-                  alt={p.full_name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-cyan-500"
-                />
-              ) : (
-                <AvatarIcon />
-              )}
+              <AvatarIcon />
+
               <div>
                 <p className="font-semibold text-lg">{p.full_name}</p>
                 <p className="text-xs text-gray-400">{p.security_id}</p>
