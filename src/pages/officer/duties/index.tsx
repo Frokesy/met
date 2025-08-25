@@ -1,58 +1,56 @@
 import { CalendarDays, MapPin, Clock9 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OfficerContainer from "../../../components/containers/OfficerContainer";
+import { useAuth } from "../../../context/AuthContext";
+import { supabase } from "../../../../utils/supabaseClient";
+
+type Duty = {
+  id: string;
+  start_time: string;
+  end_time: string;
+  location: string;
+  title: string;
+  status: "upcoming" | "completed" | "missed";
+};
 
 const MyDuties = () => {
   const [showPast, setShowPast] = useState(false);
+  const [duties, setDuties] = useState<Duty[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { officer } = useAuth();
 
-  type Duty = {
-    id: number;
-    date: string;
-    time: string;
-    location: string;
-    type: string;
-    status: "upcoming" | "completed" | "missed";
-  };
+  useEffect(() => {
+    if (!officer) return;
 
-  const upcomingDuties: Duty[] = [
-    {
-      id: 1,
-      date: "Aug 2, 2025",
-      time: "08:00 - 16:00",
-      location: "Main Gate",
-      type: "Day Patrol",
-      status: "upcoming",
-    },
-    {
-      id: 2,
-      date: "Aug 3, 2025",
-      time: "22:00 - 06:00",
-      location: "Sector B",
-      type: "Night Patrol",
-      status: "upcoming",
-    },
-  ];
+    const fetchDuties = async () => {
+      setLoading(true);
 
-  const pastDuties: Duty[] = [
-    {
-      id: 3,
-      date: "Jul 30, 2025",
-      time: "08:00 - 16:00",
-      location: "HQ Entrance",
-      type: "Day Patrol",
-      status: "completed",
-    },
-    {
-      id: 4,
-      date: "Jul 28, 2025",
-      time: "22:00 - 06:00",
-      location: "Sector A",
-      type: "Night Patrol",
-      status: "missed",
-    },
-  ];
+      let query = supabase
+        .from("duties")
+        .select("id, start_time, end_time, location, title, status")
+        .eq("user_id", officer.user_id)
+        .order("start_time", { ascending: false });
 
-  const dutiesToDisplay = showPast ? pastDuties : upcomingDuties;
+      if (showPast) {
+        query = query.in("status", ["completed", "missed"]);
+      } else {
+        query = query.eq("status", "upcoming");
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching duties:", error.message);
+        setDuties([]);
+      } else {
+        setDuties(data as Duty[]);
+      }
+
+      setLoading(false);
+    };
+
+    fetchDuties();
+  }, [officer, showPast]);
 
   return (
     <OfficerContainer active="my duties">
@@ -70,34 +68,24 @@ const MyDuties = () => {
         </button>
       </div>
 
-      <div className="space-y-4">
-        {dutiesToDisplay.map((duty) => (
-          <DutyCard key={duty.id} {...duty} />
-        ))}
-        {dutiesToDisplay.length === 0 && (
-          <p className="text-gray-400">No duties to show.</p>
-        )}
-      </div>
+      {loading ? (
+        <p className="text-gray-400">Loading duties...</p>
+      ) : duties.length > 0 ? (
+        <div className="space-y-4">
+          {duties.map((duty) => (
+            <DutyCard key={duty.id} {...duty} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-400">No duties to show.</p>
+      )}
     </OfficerContainer>
   );
 };
 
 export default MyDuties;
 
-
-const DutyCard = ({
-  date,
-  time,
-  location,
-  type,
-  status,
-}: {
-  date: string;
-  time: string;
-  location: string;
-  type: string;
-  status: "completed" | "missed" | "upcoming";
-}) => {
+const DutyCard = ({ start_time, end_time, location, title, status }: Duty) => {
   const statusColors = {
     completed: "text-green-500",
     missed: "text-red-500",
@@ -110,21 +98,36 @@ const DutyCard = ({
     upcoming: "Upcoming",
   };
 
+  const start = new Date(start_time);
+  const end = new Date(end_time);
+
+  const dateStr = start.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const timeStr = `${start.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  })} - ${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+
   return (
     <div className="bg-gray-800 p-4 rounded-md shadow-md space-y-2">
       <div className="flex justify-between items-center">
-        <h3 className="text-white font-medium text-lg">{type}</h3>
+        <h3 className="text-white font-medium text-lg">{title}</h3>
         <span className={`text-sm font-medium ${statusColors[status]}`}>
           {statusText[status]}
         </span>
       </div>
       <div className="text-gray-300 flex items-center space-x-2 text-sm">
         <CalendarDays size={16} />
-        <span>{date}</span>
+        <span>{dateStr}</span>
       </div>
       <div className="text-gray-300 flex items-center space-x-2 text-sm">
         <Clock9 size={16} />
-        <span>{time}</span>
+        <span>{timeStr}</span>
       </div>
       <div className="text-gray-300 flex items-center space-x-2 text-sm">
         <MapPin size={16} />
