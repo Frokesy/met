@@ -126,12 +126,7 @@ const OfficerDashboard = () => {
               >
                 <span>
                   {req.type} request (
-                  {req.start_date
-                    ? `${formatDate(req.start_date)} - ${formatDate(
-                        req.end_date
-                      )}`
-                    : "No date"}
-                  )
+                  {req.date ? `${formatDate(req.date)}` : "No date"})
                 </span>
                 <span
                   className={
