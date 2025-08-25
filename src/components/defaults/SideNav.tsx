@@ -1,16 +1,19 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import type { NavProps } from "./TopNav";
 import {
   BookOpen,
   CheckCircle,
   History,
   Home,
+  LogOut,
   Menu,
   Settings,
   ShieldUser,
 } from "lucide-react";
 
 const SideNav = ({ active }: NavProps) => {
+  const navigate = useNavigate();
+
   const items = [
     { label: "Dashboard", route: "/dashboard", icon: <Home /> },
     { label: "Personnel", route: "/personnel", icon: <ShieldUser /> },
@@ -20,6 +23,11 @@ const SideNav = ({ active }: NavProps) => {
     { label: "Activity Logs", route: "/activity-logs", icon: <History /> },
     { label: "System Settings", route: "/system-settings", icon: <Settings /> },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_session");
+    navigate("/admin/auth", { replace: true });
+  };
   return (
     <div className="p-4 border-r border-[#ccc] h-[100%]">
       <div className="flex items-center space-x-4">
@@ -43,6 +51,13 @@ const SideNav = ({ active }: NavProps) => {
             <span>{item.label}</span>
           </NavLink>
         ))}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 mt-6 p-3 cursor-pointer rounded-md bg-red-600 hover:bg-red-500 text-white"
+        >
+          <LogOut size={18} />
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   );

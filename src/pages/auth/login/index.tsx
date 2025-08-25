@@ -99,7 +99,7 @@ const OfficerLogin = () => {
           </button>
 
           <p className="text-sm text-cyan-400 hover:underline text-center mt-2 cursor-pointer">
-            <NavLink to="/login/admin">Login as Admin</NavLink>
+            <NavLink to="/admin/auth">Login as Admin</NavLink>
           </p>
           <p className="text-sm text-cyan-400 hover:underline text-center mt-2 cursor-pointer">
             <NavLink to="/signup">Signup</NavLink>

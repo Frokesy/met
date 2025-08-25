@@ -6,6 +6,7 @@ const Dashboard = () => {
   const [activePersonnel, setActivePersonnel] = useState(0);
   const [pendingVerification, setPendingVerification] = useState(0);
   const [todaysAttendance, setTodaysAttendance] = useState(0);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       const { count: activeCount } = await supabase
@@ -36,6 +37,7 @@ const Dashboard = () => {
     };
     fetchDashboardData();
   }, []);
+
   return (
     <MainContainer active="dashboard">
       <span className="text-[20px] text-gray-500 font-semibold">
