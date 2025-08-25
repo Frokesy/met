@@ -1,6 +1,5 @@
-import { supabase } from "../../../../utils/supabaseClient";
+import { NavLink } from "react-router";
 const OfficerLogin = () => {
-  console.log(supabase);
   return (
     <div className="relative w-full min-h-screen pt-10 bg-[#010725] flex items-center justify-center">
       <div className="w-full max-w-md mx-auto bg-gray-900 text-white rounded-xl shadow-lg p-8">
@@ -40,7 +39,7 @@ const OfficerLogin = () => {
             Login as Admin
           </p>
           <p className="text-sm text-cyan-400 hover:underline text-center mt-2 cursor-pointer">
-            Signup
+            <NavLink to="/signup">Signup</NavLink>
           </p>
         </div>
       </div>
