@@ -1,59 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pencil, Trash2, UserPlus, Users } from "lucide-react";
 import MainContainer from "../../../components/containers/MainContainer";
 import { AvatarIcon } from "../../../components/svgs/Icons";
-import AddPersonnelModal from "../../../components/modals/AddPersonnelModal";
+import AddPersonnelModal, {
+  type PersonnelType,
+} from "../../../components/modals/AddPersonnelModal";
 import { AnimatePresence } from "framer-motion";
-
-export type PersonnelType = {
-  id: number;
-  name: string;
-  securityId: string;
-  unit: string;
-  enlistmentDate: string;
-  status: string;
-  rank: string;
-  pic?: string;
-};
+import { supabase } from "../../../../utils/supabaseClient";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Personnel = () => {
-  const [personnel, setPersonnel] = useState<PersonnelType[]>([
-    {
-      id: 1,
-      name: "John Doe",
-      securityId: "12weq765",
-      unit: "Unit A",
-      enlistmentDate: "2022-01-01",
-      status: "Active",
-      rank: "Private",
-      pic: "",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      securityId: "3456789",
-      unit: "Unit B",
-      enlistmentDate: "2021-06-15",
-      status: "Inactive",
-      rank: "Corporal",
-      pic: "",
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      securityId: "9876543",
-      unit: "Unit C",
-      enlistmentDate: "2020-12-31",
-      status: "Active",
-      rank: "Sergeant",
-      pic: "",
-    },
-  ]);
-
+  const [personnel, setPersonnel] = useState<PersonnelType[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedPersonnel, setSelectedPersonnel] = useState<
-    PersonnelType | undefined | null
-  >(null);
+  const [selectedPersonnel, setSelectedPersonnel] =
+    useState<PersonnelType | null>(null);
+
+  useEffect(() => {
+    const fetchPersonnel = async () => {
+      const { data, error } = await supabase
+        .from("officers")
+        .select("*")
+        .order("full_name", { ascending: true });
+
+      if (!error && data) {
+        setPersonnel(data);
+      } else if (error) {
+        toast.error("Failed to fetch personnel");
+      }
+    };
+    fetchPersonnel();
+  }, []);
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(date);
+  };
 
   const handleAdd = () => {
     setSelectedPersonnel(null);
@@ -65,20 +52,86 @@ const Personnel = () => {
     setShowModal(true);
   };
 
-  const handleSave = (newPersonnel: PersonnelType | undefined | null) => {
-    setPersonnel((prev) => {
-      const exists = prev.find((p) => p.id === newPersonnel?.id);
-      if (exists) {
-        return prev.map((p) => (p.id === newPersonnel?.id ? newPersonnel : p));
+  const handleSave = async (newPersonnel: PersonnelType) => {
+    if (newPersonnel.id) {
+      const { data, error } = await supabase
+        .from("officers")
+        .update({
+          full_name: newPersonnel.full_name,
+          unit: newPersonnel.unit,
+          created_at: newPersonnel.created_at,
+          status: newPersonnel.status,
+          rank: newPersonnel.rank,
+          pic: newPersonnel.pic || null,
+        })
+        .eq("id", newPersonnel.id)
+        .select()
+        .single();
+
+      if (!error && data) {
+        setPersonnel((prev) =>
+          prev.map((p) => (p.id === newPersonnel.id ? data : p))
+        );
+        toast.success("Personnel updated successfully");
       } else {
-        return [...prev, { ...newPersonnel, id: Date.now() }];
+        toast.error("Failed to update personnel");
       }
-    });
+    } else {
+      if (!newPersonnel.email || !newPersonnel.password) {
+        toast.error("Email and password are required for new personnel");
+        return;
+      }
+
+      const { error: authError } = await supabase.auth.signUp({
+        email: newPersonnel.email,
+        password: newPersonnel.password,
+      });
+
+      if (authError) {
+        toast.error("Failed to create account: " + authError.message);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("officers")
+        .insert([
+          {
+            full_name: newPersonnel.full_name,
+            email: newPersonnel.email,
+            security_id: newPersonnel.security_id,
+            unit: newPersonnel.unit,
+            created_at: newPersonnel.created_at,
+            status: newPersonnel.status,
+            rank: newPersonnel.rank,
+          },
+        ])
+        .select()
+        .single();
+
+      if (!error && data) {
+        setPersonnel((prev) => [...prev, data]);
+        toast.success("Personnel added successfully");
+      } else {
+        toast.error("Failed to add personnel");
+      }
+    }
+
     setShowModal(false);
+  };
+
+  const handleDelete = async (id: number) => {
+    const { error } = await supabase.from("officers").delete().eq("id", id);
+    if (!error) {
+      setPersonnel((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Personnel deleted successfully");
+    } else {
+      toast.error("Failed to delete personnel");
+    }
   };
 
   return (
     <MainContainer active="personnel">
+      <ToastContainer position="top-center" autoClose={1500} />
       <div className="flex justify-between items-center">
         <span className="text-[20px] text-gray-500 font-semibold mb-6 block">
           Home / Personnel
@@ -103,15 +156,16 @@ const Personnel = () => {
               {p.pic ? (
                 <img
                   src={p.pic}
-                  alt={p.name}
+                  alt={p.full_name}
                   className="w-12 h-12 rounded-full object-cover border-2 border-cyan-500"
                 />
               ) : (
                 <AvatarIcon />
               )}
               <div>
-                <p className="font-semibold text-lg">{p.name}</p>
-                <p className="text-xs text-gray-400">{p.securityId}</p>
+                <p className="font-semibold text-lg">{p.full_name}</p>
+                <p className="text-xs text-gray-400">{p.security_id}</p>
+                {p.email && <p className="text-xs text-gray-400">{p.email}</p>}
               </div>
             </div>
 
@@ -122,18 +176,20 @@ const Personnel = () => {
                 </div>
                 <p className="text-sm">{p.unit}</p>
               </div>
-              <p className="text-xs text-gray-400">{p.enlistmentDate}</p>
+              <p className="text-xs text-gray-400">
+                {formatDate(p.created_at)}
+              </p>
             </div>
 
             <div>
               <span
                 className={`text-xs font-medium px-3 py-1 rounded-full ${
-                  p.status === "Active"
+                  p.status
                     ? "bg-green-700 text-green-100"
                     : "bg-red-700 text-red-100"
                 }`}
               >
-                {p.status}
+                {p.status ? "Active" : "Inactive"}
               </span>
             </div>
 
@@ -150,7 +206,10 @@ const Personnel = () => {
               >
                 <Pencil size={18} color="blue" />
               </button>
-              <button className="hover:text-red-500 transition">
+              <button
+                onClick={() => handleDelete(p.id!)}
+                className="hover:text-red-500 transition"
+              >
                 <Trash2 size={18} color="red" />
               </button>
             </div>

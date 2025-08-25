@@ -1,8 +1,10 @@
 import MainContainer from "../../../components/containers/MainContainer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addDays, startOfWeek, endOfWeek, format } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { supabase } from "../../../../utils/supabaseClient";
+import { toast } from "react-toastify";
 
 const shifts = [
   { label: "Morning Shift", time: "06:00 - 12:00" },
@@ -31,15 +33,40 @@ const DutyRoaster = () => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedShift, setSelectedShift] = useState<string | null>(null);
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(
-    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    startOfWeek(new Date(), { weekStartsOn: 1 })
   );
 
   const weekStart = startOfWeek(currentWeekStart, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
 
   const days = Array.from({ length: 7 }, (_, i) =>
-    format(addDays(weekStart, i), "EEEE"),
+    format(addDays(weekStart, i), "EEEE")
   );
+
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      const { data, error } = await supabase
+        .from("duty_roaster")
+        .select("*")
+        .gte("week_start", format(weekStart, "yyyy-MM-dd"))
+        .lte("week_start", format(weekEnd, "yyyy-MM-dd"));
+
+      if (error) {
+        toast.error("Failed to fetch assignments");
+        return;
+      }
+
+      const mapped: Record<string, string> = {};
+      data?.forEach((row) => {
+        const key = `${row.week_start}_${row.day}_${row.shift}`;
+        mapped[key] = row.unit;
+      });
+
+      setAssignments(mapped);
+    };
+
+    fetchAssignments();
+  }, [weekStart]);
 
   const openModal = (day: string, shift: string) => {
     setSelectedDay(day);
@@ -47,10 +74,32 @@ const DutyRoaster = () => {
     setModalOpen(true);
   };
 
-  const assignUnit = (unit: string) => {
+  const assignUnit = async (unit: string) => {
     if (selectedDay && selectedShift) {
-      const key = `${format(weekStart, "yyyy-MM-dd")}_${selectedDay}_${selectedShift}`;
-      setAssignments((prev) => ({ ...prev, [key]: unit }));
+      const key = `${format(
+        weekStart,
+        "yyyy-MM-dd"
+      )}_${selectedDay}_${selectedShift}`;
+
+      const { error } = await supabase.from("duty_roaster").upsert(
+        {
+          week_start: format(weekStart, "yyyy-MM-dd"),
+          day: selectedDay,
+          shift: selectedShift,
+          unit,
+        },
+        {
+          onConflict: "week_start,day,shift",
+        }
+      );
+
+      if (error) {
+        toast.error("Failed to assign unit");
+      } else {
+        setAssignments((prev) => ({ ...prev, [key]: unit }));
+        toast.success("Unit assigned successfully");
+      }
+
       setModalOpen(false);
     }
   };
@@ -88,7 +137,7 @@ const DutyRoaster = () => {
             const count = Object.keys(assignments).filter(
               (key) =>
                 key.includes(shift.label) &&
-                key.startsWith(format(weekStart, "yyyy-MM-dd")),
+                key.startsWith(format(weekStart, "yyyy-MM-dd"))
             ).length;
 
             return (
@@ -98,8 +147,8 @@ const DutyRoaster = () => {
                     shift.label === "Morning Shift"
                       ? "bg-green-500"
                       : shift.label === "Afternoon Shift"
-                        ? "bg-yellow-500"
-                        : "bg-blue-500"
+                      ? "bg-yellow-500"
+                      : "bg-blue-500"
                   }`}
                 ></span>
                 {shift.label.split(" ")[0]}: {count} assigned
@@ -131,12 +180,17 @@ const DutyRoaster = () => {
                   </div>
                 </td>
                 {days.map((day) => {
-                  const key = `${format(weekStart, "yyyy-MM-dd")}_${day}_${label}`;
+                  const key = `${format(
+                    weekStart,
+                    "yyyy-MM-dd"
+                  )}_${day}_${label}`;
                   return (
                     <td
                       key={key}
                       onClick={() => openModal(day, label)}
-                      className={`px-4 py-8 cursor-pointer transition-colors duration-200 hover:bg-gray-700 rounded-md ${getShiftBorderColor(label)}`}
+                      className={`px-4 py-8 cursor-pointer transition-colors duration-200 hover:bg-gray-700 rounded-md ${getShiftBorderColor(
+                        label
+                      )}`}
                     >
                       {assignments[key] ? (
                         <span className="font-medium text-white">

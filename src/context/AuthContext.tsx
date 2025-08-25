@@ -11,6 +11,7 @@ import {
 type Officer = {
   user_id: string;
   email: string;
+  unit?: string;
   security_id: string;
   full_name: string;
 };

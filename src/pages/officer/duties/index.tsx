@@ -3,18 +3,23 @@ import { useEffect, useState } from "react";
 import OfficerContainer from "../../../components/containers/OfficerContainer";
 import { useAuth } from "../../../context/AuthContext";
 import { supabase } from "../../../../utils/supabaseClient";
+import { format, parseISO } from "date-fns";
 
 type Duty = {
   id: string;
-  start_time: string;
-  end_time: string;
-  location: string;
-  title: string;
-  status: "upcoming" | "completed" | "missed";
+  week_start: string;
+  day: string;
+  shift: string;
+  unit: string;
+};
+
+const shiftTimes: Record<string, { start: string; end: string }> = {
+  "Morning Shift": { start: "06:00", end: "12:00" },
+  "Afternoon Shift": { start: "12:00", end: "18:00" },
+  "Evening Shift": { start: "18:00", end: "00:00" },
 };
 
 const MyDuties = () => {
-  const [showPast, setShowPast] = useState(false);
   const [duties, setDuties] = useState<Duty[]>([]);
   const [loading, setLoading] = useState(true);
   const { officer } = useAuth();
@@ -25,19 +30,11 @@ const MyDuties = () => {
     const fetchDuties = async () => {
       setLoading(true);
 
-      let query = supabase
-        .from("duties")
-        .select("id, start_time, end_time, location, title, status")
-        .eq("user_id", officer.user_id)
-        .order("start_time", { ascending: false });
-
-      if (showPast) {
-        query = query.in("status", ["completed", "missed"]);
-      } else {
-        query = query.eq("status", "upcoming");
-      }
-
-      const { data, error } = await query;
+      const { data, error } = await supabase
+        .from("duty_roaster")
+        .select("id, week_start, day, shift, unit")
+        .eq("unit", officer.unit)
+        .order("week_start", { ascending: true });
 
       if (error) {
         console.error("Error fetching duties:", error.message);
@@ -50,7 +47,7 @@ const MyDuties = () => {
     };
 
     fetchDuties();
-  }, [officer, showPast]);
+  }, [officer]);
 
   return (
     <OfficerContainer active="my duties">
@@ -58,15 +55,7 @@ const MyDuties = () => {
         Home / My Duties
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-white text-2xl font-semibold">Scheduled Duties</h2>
-        <button
-          onClick={() => setShowPast(!showPast)}
-          className="bg-blue-600 hover:bg-blue-500 px-4 py-2 text-white rounded-md text-sm"
-        >
-          {showPast ? "View Upcoming" : "View Past"}
-        </button>
-      </div>
+      <h2 className="text-white text-2xl font-semibold mb-6">My Duty Roster</h2>
 
       {loading ? (
         <p className="text-gray-400">Loading duties...</p>
@@ -77,7 +66,7 @@ const MyDuties = () => {
           ))}
         </div>
       ) : (
-        <p className="text-gray-400">No duties to show.</p>
+        <p className="text-gray-400">No duties assigned.</p>
       )}
     </OfficerContainer>
   );
@@ -85,41 +74,17 @@ const MyDuties = () => {
 
 export default MyDuties;
 
-const DutyCard = ({ start_time, end_time, location, title, status }: Duty) => {
-  const statusColors = {
-    completed: "text-green-500",
-    missed: "text-red-500",
-    upcoming: "text-yellow-400",
-  };
+const DutyCard = ({ week_start, day, shift, unit }: Duty) => {
+  const shiftInfo = shiftTimes[shift] || { start: "00:00", end: "00:00" };
 
-  const statusText = {
-    completed: "Completed",
-    missed: "Missed",
-    upcoming: "Upcoming",
-  };
-
-  const start = new Date(start_time);
-  const end = new Date(end_time);
-
-  const dateStr = start.toLocaleDateString(undefined, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  const timeStr = `${start.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  })} - ${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  const dutyDate = parseISO(week_start);
+  const dateStr = format(dutyDate, "MMM dd, yyyy") + ` (${day})`;
 
   return (
     <div className="bg-gray-800 p-4 rounded-md shadow-md space-y-2">
       <div className="flex justify-between items-center">
-        <h3 className="text-white font-medium text-lg">{title}</h3>
-        <span className={`text-sm font-medium ${statusColors[status]}`}>
-          {statusText[status]}
-        </span>
+        <h3 className="text-white font-medium text-lg">{shift}</h3>
+        <span className="text-sm text-blue-400 font-medium">{unit}</span>
       </div>
       <div className="text-gray-300 flex items-center space-x-2 text-sm">
         <CalendarDays size={16} />
@@ -127,11 +92,13 @@ const DutyCard = ({ start_time, end_time, location, title, status }: Duty) => {
       </div>
       <div className="text-gray-300 flex items-center space-x-2 text-sm">
         <Clock9 size={16} />
-        <span>{timeStr}</span>
+        <span>
+          {shiftInfo.start} - {shiftInfo.end}
+        </span>
       </div>
       <div className="text-gray-300 flex items-center space-x-2 text-sm">
         <MapPin size={16} />
-        <span>{location}</span>
+        <span>Assigned Location</span>
       </div>
     </div>
   );

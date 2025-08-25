@@ -1,22 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 export interface PersonnelType {
   id?: number;
-  name: string;
-  securityId: string;
+  full_name: string;
+  email?: string;
+  security_id: string;
   unit: string;
-  enlistmentDate: string;
-  status: string;
+  created_at: string;
+  status: boolean;
   rank: string;
+  password?: string;
   pic?: string;
 }
 
 interface AddPersonnelModalProps {
   onClose: () => void;
-  onSave: (data: PersonnelType & { file?: File | null }) => void;
-  personnel: PersonnelType | undefined | null;
+  onSave: (data: PersonnelType) => void;
+  personnel: PersonnelType | null;
 }
 
 const AddPersonnelModal = ({
@@ -24,52 +26,50 @@ const AddPersonnelModal = ({
   onSave,
   personnel,
 }: AddPersonnelModalProps) => {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const generateSecurityId = () => {
+    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `OFC/2025/${randomPart}`;
+  };
 
   const [formData, setFormData] = useState<PersonnelType>({
-    name: "",
-    securityId: "",
+    full_name: "",
+    email: "",
+    security_id: generateSecurityId(),
     unit: "",
-    enlistmentDate: "",
-    status: "Active",
+    created_at: new Date().toISOString().split("T")[0],
+    status: true,
     rank: "",
-    pic: "",
+    password: "",
   });
 
   useEffect(() => {
     if (personnel) {
-      setFormData(personnel);
-      setImagePreview(personnel.pic || null);
+      const formattedDate = personnel.created_at
+        ? new Date(personnel.created_at).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0];
+      setFormData({ ...personnel, created_at: formattedDate });
     }
   }, [personnel]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0];
-    if (selected) {
-      setFile(selected);
-      const previewURL = URL.createObjectURL(selected);
-      setImagePreview(previewURL);
-    }
-  };
-
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLDivElement).id === "modal-backdrop") {
-      onClose();
-    }
+    if ((e.target as HTMLDivElement).id === "modal-backdrop") onClose();
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const target = e.target as HTMLInputElement;
+    const { name, value, type } = target;
+    if (type === "checkbox") {
+      setFormData((prev) => ({ ...prev, [name]: target.checked }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ ...formData, file });
+    onSave({ ...formData });
   };
 
   return (
@@ -101,28 +101,55 @@ const AddPersonnelModal = ({
           <div>
             <label className="text-sm font-medium text-white">Name</label>
             <input
-              name="name"
+              name="full_name"
               type="text"
-              value={formData.name}
+              value={formData.full_name}
               onChange={handleChange}
               placeholder="Enter full name"
               className="w-full p-3 mt-2 rounded-lg border border-cyan-500 bg-gray-800 placeholder:text-gray-400 text-white outline-none"
             />
           </div>
 
+          {!personnel && (
+            <div>
+              <label className="text-sm font-medium text-white">Email</label>
+              <input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter email"
+                className="w-full p-3 mt-2 rounded-lg border border-cyan-500 bg-gray-800 placeholder:text-gray-400 text-white outline-none"
+              />
+            </div>
+          )}
+
           <div>
             <label className="text-sm font-medium text-white">
               Security ID
             </label>
             <input
-              name="securityId"
+              name="security_id"
               type="text"
-              value={formData.securityId}
-              onChange={handleChange}
-              placeholder="e.g. 12345ABC"
-              className="w-full p-3 mt-2 rounded-lg border border-cyan-500 bg-gray-800 placeholder:text-gray-400 text-white outline-none"
+              value={formData.security_id}
+              disabled
+              className="w-full p-3 mt-2 rounded-lg border border-gray-500 bg-gray-700 text-gray-200 cursor-not-allowed"
             />
           </div>
+
+          {!personnel && (
+            <div>
+              <label className="text-sm font-medium text-white">Password</label>
+              <input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Set a password"
+                className="w-full p-3 mt-2 rounded-lg border border-cyan-500 bg-gray-800 placeholder:text-gray-400 text-white outline-none"
+              />
+            </div>
+          )}
 
           <div>
             <label className="text-sm font-medium text-white">Unit</label>
@@ -141,25 +168,23 @@ const AddPersonnelModal = ({
               Enlistment Date
             </label>
             <input
-              name="enlistmentDate"
+              name="created_at"
               type="date"
-              value={formData.enlistmentDate}
+              value={formData.created_at}
               onChange={handleChange}
               className="w-full p-3 mt-2 rounded-lg border border-cyan-500 bg-gray-800 text-white outline-none"
             />
           </div>
 
-          <div>
-            <label className="text-sm font-medium text-white">Status</label>
-            <select
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
               name="status"
-              value={formData.status}
+              checked={formData.status}
               onChange={handleChange}
-              className="w-full p-3 mt-2 rounded-lg border border-cyan-500 bg-gray-800 text-white outline-none"
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+              className="accent-cyan-500"
+            />
+            <label className="text-sm font-medium text-white">Active</label>
           </div>
 
           <div>
@@ -172,28 +197,6 @@ const AddPersonnelModal = ({
               placeholder="Rank e.g. Corporal"
               className="w-full p-3 mt-2 rounded-lg border border-cyan-500 bg-gray-800 text-white outline-none"
             />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-white">Photo</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              className="w-full mt-2 text-white file:bg-cyan-600 file:border-none file:rounded file:px-4 file:py-2 file:text-white file:cursor-pointer bg-gray-700"
-            />
-
-            {imagePreview && (
-              <div className="mt-4">
-                <p className="text-sm text-white mb-2">Preview:</p>
-                <img
-                  src={imagePreview}
-                  alt="Selected personnel"
-                  className="rounded-lg border border-cyan-500 w-[70px] h-[70px] object-cover"
-                />
-              </div>
-            )}
           </div>
 
           <button

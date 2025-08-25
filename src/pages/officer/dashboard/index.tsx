@@ -5,6 +5,7 @@ import { ClipboardList, CheckCircle, Clock } from "lucide-react";
 import OfficerContainer from "../../../components/containers/OfficerContainer";
 import { useAuth } from "../../../context/AuthContext";
 import { supabase } from "../../../../utils/supabaseClient";
+import { format } from "date-fns";
 
 const OfficerDashboard = () => {
   const { officer } = useAuth();
@@ -18,52 +19,73 @@ const OfficerDashboard = () => {
     if (!officer) return;
 
     const fetchDashboardData = async () => {
-      const userId = officer.user_id;
       const now = new Date();
 
-      const { data: todayDutyData } = await supabase
-        .from("duties")
-        .select("*")
-        .eq("user_id", userId)
-        .lte("start_time", now.toISOString())
-        .gte("end_time", now.toISOString())
-        .single();
+      const { data: dutyData, error } = await supabase
+        .from("duty_roaster")
+        .select("week_start, day, shift, unit")
+        .eq("unit", officer.unit)
+        .order("week_start", { ascending: true });
 
-      if (todayDutyData) {
-        setTodayDuty(
-          `${todayDutyData.title} (${formatTime(
-            todayDutyData.start_time
-          )} - ${formatTime(todayDutyData.end_time)})`
-        );
-      } else {
-        setTodayDuty("No duty assigned for today");
+      if (error) {
+        console.error("Error fetching duties:", error.message);
+        return;
       }
 
-      const { data: nextDutyData } = await supabase
-        .from("duties")
-        .select("*")
-        .eq("user_id", userId)
-        .gt("start_time", now.toISOString())
-        .order("start_time", { ascending: true })
-        .limit(1)
-        .single();
+      if (dutyData && dutyData.length > 0) {
+        const dutiesWithDates = dutyData.map((d) => {
+          const weekStart = new Date(d.week_start);
+          const daysOfWeek = [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ];
+          const dayIndex = daysOfWeek.indexOf(d.day);
+          const dutyDate = new Date(weekStart);
+          dutyDate.setDate(weekStart.getDate() + dayIndex);
 
-      if (nextDutyData) {
-        setNextDuty(
-          `${nextDutyData.title} on ${formatDate(
-            nextDutyData.start_time
-          )} (${formatTime(nextDutyData.start_time)} - ${formatTime(
-            nextDutyData.end_time
-          )})`
+          return { ...d, dutyDate };
+        });
+
+        const todayDutyData = dutiesWithDates.find(
+          (d) => d.dutyDate.toDateString() === now.toDateString()
         );
-      } else {
-        setNextDuty("No upcoming duty");
+
+        if (todayDutyData) {
+          setTodayDuty(
+            `${todayDutyData.shift} on ${format(
+              todayDutyData.dutyDate,
+              "MMM dd"
+            )}`
+          );
+        } else {
+          setTodayDuty("No duty assigned for today");
+        }
+
+        const upcomingDuty = dutiesWithDates
+          .filter((d) => d.dutyDate > now)
+          .sort((a, b) => a.dutyDate.getTime() - b.dutyDate.getTime())[0];
+
+        if (upcomingDuty) {
+          setNextDuty(
+            `${upcomingDuty.shift} on ${upcomingDuty.day}, ${format(
+              upcomingDuty.dutyDate,
+              "MMM dd"
+            )}`
+          );
+        } else {
+          setNextDuty("No upcoming duty");
+        }
       }
 
       const { data: attendanceData } = await supabase
         .from("attendance")
         .select("status, marked_at")
-        .eq("user_id", userId)
+        .eq("user_id", officer.user_id)
         .gte("marked_at", startOfDay(now).toISOString())
         .lte("marked_at", endOfDay(now).toISOString())
         .order("marked_at", { ascending: false })
@@ -95,7 +117,7 @@ const OfficerDashboard = () => {
       const { data: requestsData } = await supabase
         .from("requests")
         .select("*")
-        .eq("user_id", userId)
+        .eq("user_id", officer.user_id)
         .order("created_at", { ascending: false })
         .limit(3);
 
@@ -192,12 +214,6 @@ const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-  });
-
-const formatTime = (dateStr: string) =>
-  new Date(dateStr).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
   });
 
 const startOfDay = (date: Date) => {
