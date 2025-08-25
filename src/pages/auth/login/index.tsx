@@ -1,4 +1,6 @@
+import { supabase } from "../../../../utils/supabaseClient";
 const OfficerLogin = () => {
+  console.log(supabase);
   return (
     <div className="relative w-full min-h-screen pt-10 bg-[#010725] flex items-center justify-center">
       <div className="w-full max-w-md mx-auto bg-gray-900 text-white rounded-xl shadow-lg p-8">
