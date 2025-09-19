@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useEffect, useState } from "react";
-import { CalendarDays, User, Tag, UserCircle } from "lucide-react";
+import { CalendarDays, UserCircle } from "lucide-react";
 import { format } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useAuth } from "../../../context/AuthContext";
 import { supabase } from "../../../../utils/supabaseClient";
 import OfficerContainer from "../../../components/containers/OfficerContainer";
+import AddIncidentModal from "../../../components/modals/AddIncidentModal";
 
 interface CaseFile {
   id: string;
@@ -44,6 +45,52 @@ const CaseFiles = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCase, setSelectedCase] = useState<CaseFile | null>(null);
   const { officer } = useAuth();
+  const [showModal, setShowModal] = useState(false);
+  const [newCase, setNewCase] = useState({
+    title: "",
+    description: "",
+    related_person_id: "",
+  });
+  const [profiles, setProfiles] = useState<any[]>([]);
+
+  const handleCreateIncident = async () => {
+    if (!newCase.title || !newCase.description) return;
+
+    const { data, error } = await supabase
+      .from("cases")
+      .insert([
+        {
+          title: newCase.title,
+          description: newCase.description,
+          status: "incident",
+          assigned_officer: officer?.user_id,
+          related_person_id: newCase.related_person_id || null,
+        },
+      ])
+      .select("*, criminal_profiles(full_name, alias)")
+      .single();
+
+    if (error) {
+      console.error("Error creating incident:", error);
+    } else if (data) {
+      setCases((prev) => [data, ...prev]);
+      setShowModal(false);
+      setNewCase({ title: "", description: "", related_person_id: "" });
+    }
+  };
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const { data, error } = await supabase
+        .from("criminal_profiles")
+        .select("id, full_name, alias");
+
+      if (!error && data) {
+        setProfiles(data);
+      }
+    };
+    fetchProfiles();
+  }, []);
 
   useEffect(() => {
     if (!officer) return;
@@ -83,8 +130,15 @@ const CaseFiles = () => {
 
   return (
     <OfficerContainer active="case files">
-      <h2 className="text-2xl font-bold text-white mb-6">Case Files</h2>
-
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-white">Case Files</h2>
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-md hover:bg-cyan-500"
+        >
+          Log Incident
+        </button>
+      </div>
       {loading ? (
         <p className="text-gray-400">Loading cases...</p>
       ) : cases.length === 0 ? (
@@ -126,60 +180,14 @@ const CaseFiles = () => {
         </div>
       )}
 
-      {/* Modal for details */}
-      <AnimatePresence>
-        {selectedCase && (
-          <motion.div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="bg-gray-900 p-6 rounded-lg max-w-lg w-full shadow-lg relative"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-            >
-              <button
-                className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                onClick={() => setSelectedCase(null)}
-              >
-                ✕
-              </button>
-
-              <h3 className="text-xl font-bold text-cyan-400 mb-4">
-                {selectedCase.title}
-              </h3>
-
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                <CalendarDays size={16} />
-                {format(new Date(selectedCase.created_at), "PPP")}
-              </div>
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                <User size={16} />
-                {selectedCase.assigned_officer || "Unassigned"}
-              </div>
-              {selectedCase.criminal_name && (
-                <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                  <UserCircle size={16} />
-                  {selectedCase.criminal_name}
-                </div>
-              )}
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
-                <Tag size={16} />
-                {statusLabels[selectedCase.status]}
-              </div>
-
-              <p className="text-gray-300 mb-4">{selectedCase.description}</p>
-
-              <button className="px-4 py-2 bg-cyan-500 text-black font-semibold rounded-md hover:bg-cyan-400">
-                Update Progress
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AddIncidentModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleCreateIncident}
+        newCase={newCase}
+        setNewCase={setNewCase}
+        profiles={profiles}
+      />
     </OfficerContainer>
   );
 };
