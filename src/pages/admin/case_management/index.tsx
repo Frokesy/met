@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, User, Tag, Search } from "lucide-react";
-import { format } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
+import { CalendarDays, User, Search, UserCircle } from "lucide-react";
+import { format, isWithinInterval } from "date-fns";
+import { motion } from "framer-motion";
 import { supabase } from "../../../../utils/supabaseClient";
 import MainContainer from "../../../components/containers/MainContainer";
+import AdminCaseModal from "../../../components/modals/AdminCaseModal";
 
 interface CaseFile {
   id: string;
@@ -12,7 +13,31 @@ interface CaseFile {
   assigned_officer: string;
   status: string;
   created_at: string;
+  criminal_profiles?: {
+    full_name: string;
+    alias?: string;
+  };
 }
+
+const statusLabels: Record<string, string> = {
+  incident: "Incident Report",
+  pending: "Pending",
+  under_investigation: "Under Investigation",
+  transferred: "Transferred",
+  charge_to_court: "Charge to Court",
+  court: "Court Case",
+  closed: "Closed",
+};
+
+const statusColors: Record<string, string> = {
+  incident: "bg-orange-500 text-white",
+  pending: "bg-yellow-500 text-black",
+  under_investigation: "bg-blue-500 text-white",
+  transferred: "bg-purple-500 text-white",
+  charge_to_court: "bg-pink-500 text-white",
+  court: "bg-indigo-600 text-white",
+  closed: "bg-green-600 text-white",
+};
 
 const AdminCaseManagement = () => {
   const [cases, setCases] = useState<CaseFile[]>([]);
@@ -21,12 +46,46 @@ const AdminCaseManagement = () => {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
 
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const [officers, setOfficers] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const fetchOfficers = async () => {
+      const { data, error } = await supabase
+        .from("officers")
+        .select("user_id, full_name");
+
+      if (!error && data) {
+        const officerMap: Record<string, string> = {};
+        data.forEach((o) => {
+          officerMap[o.user_id] = o.full_name;
+        });
+        setOfficers(officerMap);
+      }
+    };
+    fetchOfficers();
+  }, []);
+
+  const handleNotesUpdate = (caseId: string, newNotes: string) => {
+    setCases((prev) =>
+      prev.map((c) => (c.id === caseId ? { ...c, notes: newNotes } : c))
+    );
+    setSelectedCase((prev) => (prev ? { ...prev, notes: newNotes } : prev));
+  };
+
   useEffect(() => {
     const fetchCases = async () => {
       try {
         const { data, error } = await supabase
           .from("cases")
-          .select("*")
+          .select(
+            `
+              *,
+              criminal_profiles(full_name, alias)
+            `
+          )
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -45,9 +104,32 @@ const AdminCaseManagement = () => {
     const matchesFilter = filter === "All" || c.status === filter;
     const matchesSearch =
       c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.assigned_officer.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
+      c.assigned_officer?.toLowerCase().includes(search.toLowerCase());
+
+    const matchesDate =
+      startDate && endDate
+        ? isWithinInterval(new Date(c.created_at), {
+            start: new Date(startDate),
+            end: new Date(endDate),
+          })
+        : true;
+
+    return matchesFilter && matchesSearch && matchesDate;
   });
+
+  const handleUpdateStatus = async (caseId: string, newStatus: string) => {
+    const { error } = await supabase
+      .from("cases")
+      .update({ status: newStatus })
+      .eq("id", caseId);
+
+    if (!error) {
+      setCases((prev) =>
+        prev.map((c) => (c.id === caseId ? { ...c, status: newStatus } : c))
+      );
+      setSelectedCase((prev) => (prev ? { ...prev, status: newStatus } : prev));
+    }
+  };
 
   return (
     <MainContainer active="case management">
@@ -60,12 +142,11 @@ const AdminCaseManagement = () => {
           className="bg-gray-800 text-white p-2 rounded-md"
         >
           <option value="All">All</option>
-          <option value="Pending">Pending</option>
-          <option value="Under Investigation">Under Investigation</option>
-          <option value="Transferred">Transferred</option>
-          <option value="Charge-to-Court">Charge-to-Court</option>
-          <option value="Court Tracker">Court Tracker</option>
-          <option value="Closed">Closed</option>
+          {Object.entries(statusLabels).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
         </select>
 
         <div className="flex items-center bg-gray-800 px-3 rounded-md w-72">
@@ -76,6 +157,25 @@ const AdminCaseManagement = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-transparent text-white w-full outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-400">From</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="px-3 py-1 rounded-md bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400">To</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="px-3 py-1 rounded-md bg-gray-800 text-white border border-gray-600"
           />
         </div>
       </div>
@@ -99,22 +199,10 @@ const AdminCaseManagement = () => {
                 </h3>
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    item.status === "Pending"
-                      ? "bg-yellow-500 text-black"
-                      : item.status === "Under Investigation"
-                      ? "bg-blue-500 text-white"
-                      : item.status === "Transferred"
-                      ? "bg-purple-500 text-white"
-                      : item.status === "Charge-to-Court"
-                      ? "bg-orange-500 text-white"
-                      : item.status === "Court Tracker"
-                      ? "bg-indigo-500 text-white"
-                      : item.status === "Closed"
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-500 text-white"
+                    statusColors[item.status] || "bg-gray-500 text-white"
                   }`}
                 >
-                  {item.status}
+                  {statusLabels[item.status] || item.status}
                 </span>
               </div>
 
@@ -124,65 +212,39 @@ const AdminCaseManagement = () => {
               </div>
               <div className="flex items-center gap-2 text-gray-400 text-sm mt-1">
                 <User size={16} />
-                {item.assigned_officer}
+                {officers[item.assigned_officer] || "Unknown officer"}
               </div>
+              {item.criminal_profiles?.full_name && (
+                <div className="flex items-center gap-2 text-gray-400 text-sm mt-1">
+                  <UserCircle size={16} />
+                  {item.criminal_profiles.full_name}{" "}
+                  {item.criminal_profiles.alias &&
+                    `(${item.criminal_profiles.alias})`}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
       )}
 
-      <AnimatePresence>
-        {selectedCase && (
-          <motion.div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="bg-gray-900 p-6 rounded-lg max-w-lg w-full shadow-lg relative"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-            >
-              <button
-                className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                onClick={() => setSelectedCase(null)}
-              >
-                ✕
-              </button>
-
-              <h3 className="text-xl font-bold text-cyan-400 mb-4">
-                {selectedCase.title}
-              </h3>
-
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                <CalendarDays size={16} />
-                {format(new Date(selectedCase.created_at), "PPP")}
-              </div>
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
-                <User size={16} />
-                {selectedCase.assigned_officer}
-              </div>
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
-                <Tag size={16} />
-                {selectedCase.status}
-              </div>
-
-              <p className="text-gray-300 mb-4">{selectedCase.description}</p>
-
-              <div className="flex gap-3">
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-400">
-                  Re-Assign
-                </button>
-                <button className="px-4 py-2 bg-cyan-500 text-black font-semibold rounded-md hover:bg-cyan-400">
-                  Update Status
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AdminCaseModal
+        caseFile={selectedCase}
+        statusLabels={statusLabels}
+        onClose={() => setSelectedCase(null)}
+        onStatusUpdate={handleUpdateStatus}
+        onNotesUpdate={handleNotesUpdate}
+        officers={officers}
+        onReassign={(caseId, newOfficerId) => {
+          setCases((prev) =>
+            prev.map((c) =>
+              c.id === caseId ? { ...c, assigned_officer: newOfficerId } : c
+            )
+          );
+          setSelectedCase((prev) =>
+            prev ? { ...prev, assigned_officer: newOfficerId } : prev
+          );
+        }}
+      />
     </MainContainer>
   );
 };
