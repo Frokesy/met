@@ -29,7 +29,7 @@ const AddIncidentModal = ({
     <AnimatePresence>
       {show && (
         <motion.div
-          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -44,7 +44,6 @@ const AddIncidentModal = ({
               Log New Incident
             </h3>
 
-            {/* Title */}
             <input
               type="text"
               placeholder="Title"
@@ -55,7 +54,6 @@ const AddIncidentModal = ({
               className="w-full mb-3 p-2 rounded bg-gray-800 text-white"
             />
 
-            {/* Description */}
             <textarea
               placeholder="Description"
               value={newCase.description}
@@ -65,7 +63,6 @@ const AddIncidentModal = ({
               className="w-full mb-3 p-2 rounded bg-gray-800 text-white"
             />
 
-            {/* Related Person (Suspect) */}
             <label className="block text-gray-300 mb-2 text-sm">
               Suspect (optional)
             </label>
@@ -84,7 +81,6 @@ const AddIncidentModal = ({
               ))}
             </select>
 
-            {/* Actions */}
             <div className="flex justify-end gap-2">
               <button
                 onClick={onClose}

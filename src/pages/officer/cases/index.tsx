@@ -8,6 +8,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { supabase } from "../../../../utils/supabaseClient";
 import OfficerContainer from "../../../components/containers/OfficerContainer";
 import AddIncidentModal from "../../../components/modals/AddIncidentModal";
+import CaseDetailsModal from "../../../components/modals/CaseDetailsModal";
 
 interface CaseFile {
   id: string;
@@ -187,6 +188,13 @@ const CaseFiles = () => {
         newCase={newCase}
         setNewCase={setNewCase}
         profiles={profiles}
+      />
+      <CaseDetailsModal
+        show={!!selectedCase}
+        onClose={() => setSelectedCase(null)}
+        caseFile={selectedCase}
+        statusLabels={statusLabels}
+        statusColors={statusColors}
       />
     </OfficerContainer>
   );
