@@ -4,7 +4,6 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import SemesterResults from "./pages/admin/semester_results";
 import Notes from "./pages/admin/notes";
 import Dashboard from "./pages/admin/dashboard";
 import Personnel from "./pages/admin/personnel";
@@ -23,6 +22,7 @@ import AdminLogin from "./pages/admin/auth/login";
 import OfficerSignup from "./pages/auth/signup";
 import type { JSX } from "react";
 import OfficerProtectedRoute from "./components/defaults/OfficerProectedRoutes";
+import CaseFiles from "./pages/officer/cases";
 
 const AdminRoute = ({ element }: { element: JSX.Element }) => {
   const isAdmin = localStorage.getItem("admin_session") === "true";
@@ -45,10 +45,6 @@ const App = () => {
     {
       path: "/verifications",
       element: <AdminRoute element={<Verifications />} />,
-    },
-    {
-      path: "/semester-results",
-      element: <AdminRoute element={<SemesterResults />} />,
     },
     { path: "/notes", element: <AdminRoute element={<Notes />} /> },
     {
@@ -100,6 +96,14 @@ const App = () => {
       element: (
         <OfficerProtectedRoute>
           <OfficerSettings />
+        </OfficerProtectedRoute>
+      ),
+    },
+    {
+      path: "/officer/case-files",
+      element: (
+        <OfficerProtectedRoute>
+          <CaseFiles />
         </OfficerProtectedRoute>
       ),
     },

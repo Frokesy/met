@@ -6,6 +6,8 @@ import {
   FileText,
   Settings,
   LogOut,
+  Briefcase,
+  Fingerprint,
 } from "lucide-react";
 import type { NavProps } from "./TopNav";
 import { useAuth } from "../../context/AuthContext";
@@ -26,8 +28,26 @@ const OfficerSideNav = ({ active }: NavProps) => {
       route: "/officer/attendance",
       icon: <CalendarCheck2 />,
     },
-    { label: "Requests", route: "/officer/requests", icon: <FileText /> },
-    { label: "Settings", route: "/officer/settings", icon: <Settings /> },
+    {
+      label: "Requests",
+      route: "/officer/requests",
+      icon: <FileText />,
+    },
+    {
+      label: "Case Files",
+      route: "/officer/case-files",
+      icon: <Briefcase />,
+    },
+    {
+      label: "Criminal Records",
+      route: "/officer/criminal-records",
+      icon: <Fingerprint />,
+    },
+    {
+      label: "Settings",
+      route: "/officer/settings",
+      icon: <Settings />,
+    },
   ];
 
   const handleLogout = () => {
