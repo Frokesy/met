@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useEffect, useState } from "react";
 import { CalendarDays, UserCircle } from "lucide-react";
-import { format } from "date-fns";
+import { format, isWithinInterval } from "date-fns";
 import { motion } from "framer-motion";
 import { useAuth } from "../../../context/AuthContext";
 import { supabase } from "../../../../utils/supabaseClient";
@@ -53,6 +52,11 @@ const CaseFiles = () => {
     related_person_id: "",
   });
   const [profiles, setProfiles] = useState<any[]>([]);
+
+  // 🔹 Filter states
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
   const handleCreateIncident = async () => {
     if (!newCase.title || !newCase.description) return;
@@ -129,6 +133,26 @@ const CaseFiles = () => {
     fetchCases();
   }, [officer]);
 
+  // 🔹 Combined filters
+  const filteredCases = cases.filter((c) => {
+    let valid = true;
+
+    if (statusFilter) {
+      valid = c.status === statusFilter;
+    }
+
+    if (startDate && endDate) {
+      valid =
+        valid &&
+        isWithinInterval(new Date(c.created_at), {
+          start: new Date(startDate),
+          end: new Date(endDate),
+        });
+    }
+
+    return valid;
+  });
+
   return (
     <OfficerContainer active="case files">
       <div className="flex justify-between items-center mb-6">
@@ -140,13 +164,54 @@ const CaseFiles = () => {
           Log Incident
         </button>
       </div>
+
+      {/* 🔹 Filter controls */}
+      <div className="flex flex-wrap items-end gap-4 mb-6">
+        {/* Status Filter */}
+        <div>
+          <label className="block text-sm text-gray-400">Status</label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 rounded-md bg-gray-800 text-white border border-gray-600"
+          >
+            <option value="">All</option>
+            {Object.entries(statusLabels).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Date Filters */}
+        <div>
+          <label className="block text-sm text-gray-400">From</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="px-3 py-2 rounded-md bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400">To</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="px-3 py-2 rounded-md bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+      </div>
+
       {loading ? (
         <p className="text-gray-400">Loading cases...</p>
-      ) : cases.length === 0 ? (
+      ) : filteredCases.length === 0 ? (
         <p className="text-gray-400">No case files found.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {cases.map((item) => (
+          {filteredCases.map((item) => (
             <motion.div
               key={item.id}
               layout
