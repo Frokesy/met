@@ -23,6 +23,7 @@ import OfficerSignup from "./pages/auth/signup";
 import type { JSX } from "react";
 import OfficerProtectedRoute from "./components/defaults/OfficerProectedRoutes";
 import CaseFiles from "./pages/officer/cases";
+import AdminCaseManagement from "./pages/admin/case_management";
 
 const AdminRoute = ({ element }: { element: JSX.Element }) => {
   const isAdmin = localStorage.getItem("admin_session") === "true";
@@ -50,6 +51,10 @@ const App = () => {
     {
       path: "/activity-logs",
       element: <AdminRoute element={<ActivityLogs />} />,
+    },
+    {
+      path: "/case-management",
+      element: <AdminRoute element={<AdminCaseManagement />} />,
     },
     {
       path: "/system-settings",
