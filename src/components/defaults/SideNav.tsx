@@ -25,6 +25,11 @@ const SideNav = ({ active }: NavProps) => {
       route: "/case-management",
       icon: <Briefcase />,
     },
+    {
+      label: "Criminal Records",
+      route: "/criminal-records",
+      icon: <ShieldUser />,
+    },
     { label: "Verifications", route: "/verifications", icon: <CheckCircle /> },
     { label: "Activity Logs", route: "/activity-logs", icon: <History /> },
     { label: "System Settings", route: "/system-settings", icon: <Settings /> },
