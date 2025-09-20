@@ -24,6 +24,7 @@ import type { JSX } from "react";
 import OfficerProtectedRoute from "./components/defaults/OfficerProectedRoutes";
 import CaseFiles from "./pages/officer/cases";
 import AdminCaseManagement from "./pages/admin/case_management";
+import OfficerCriminalRecords from "./pages/officer/criminal_records";
 
 const AdminRoute = ({ element }: { element: JSX.Element }) => {
   const isAdmin = localStorage.getItem("admin_session") === "true";
@@ -109,6 +110,14 @@ const App = () => {
       element: (
         <OfficerProtectedRoute>
           <CaseFiles />
+        </OfficerProtectedRoute>
+      ),
+    },
+    {
+      path: "/officer/criminal-records",
+      element: (
+        <OfficerProtectedRoute>
+          <OfficerCriminalRecords />
         </OfficerProtectedRoute>
       ),
     },
