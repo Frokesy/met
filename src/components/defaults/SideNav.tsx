@@ -1,7 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import type { NavProps } from "./TopNav";
 import {
-  BookOpen,
   Briefcase,
   CheckCircle,
   History,
@@ -19,7 +18,7 @@ const SideNav = ({ active }: NavProps) => {
     { label: "Dashboard", route: "/dashboard", icon: <Home /> },
     { label: "Personnel", route: "/personnel", icon: <ShieldUser /> },
     { label: "Duty Roaster", route: "/duty-roaster", icon: <Menu /> },
-    { label: "Attendance", route: "/attendance", icon: <BookOpen /> },
+    // { label: "Attendance", route: "/attendance", icon: <BookOpen /> },
     {
       label: "Case Management",
       route: "/case-management",
